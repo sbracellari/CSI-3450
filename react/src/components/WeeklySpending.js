@@ -25,7 +25,8 @@ const styles = () => ({
     margin: '30px 70px 40px 70px'
   },
   content: {
-    padding: 40
+    padding: 40,
+    textAlign: 'center'
   },
   paper: {
     margin: '5px 20px 20px 20px',
@@ -77,8 +78,7 @@ class WeeklySpending extends Component {
         >
           <DialogTitle className={classes.title}>Close this Account?</DialogTitle>
           <DialogContent className={classes.content}>
-            <Typography>Close your SYB Money Market account?</Typography>
-            <Typography className={classes.warning}><strong>Warning:</strong> This action cannot be undone.</Typography>
+            <Typography>Close your SYB Money Market account? <br /> This action cannot be undone.</Typography>
           </DialogContent>
           <DialogActions>
             <Button 

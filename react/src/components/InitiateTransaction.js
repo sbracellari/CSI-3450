@@ -4,6 +4,11 @@ import Typography from '@material-ui/core/Typography'
 import Box from '@material-ui/core/Box'
 import Tab from '@material-ui/core/Tab'
 import Tabs from '@material-ui/core/Tabs'
+import NativeSelect from '@material-ui/core/NativeSelect'
+import InputBase from '@material-ui/core/InputBase'
+import FormControl from '@material-ui/core/FormControl'
+import InputLabel from '@material-ui/core/InputLabel'
+import Button from '@material-ui/core/Button'
 
 const styles = () => ({
   background: {
@@ -23,6 +28,30 @@ const styles = () => ({
     fontFamily: 'Lemonada',
     fontSize: 24
   },
+    icon: {
+    color: 'white'
+  },
+  input: {
+    color: 'white',
+    padding: '12px 0px 0px 10px'
+  },
+  form2: {
+    width: 400,
+    marginTop: 20
+  },
+  main: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    padding: '0px 40px 40px 40px'
+  },
+  btn2: {
+    color: 'white',
+    backgroundColor: '#0091c2',
+    float: 'right',
+    marginRight: 10,
+    marginBottom: 30
+  },
   form: {
     display: 'flex',
     flexDirection: 'column',
@@ -33,11 +62,11 @@ const styles = () => ({
   },
   panel: {
     margin: 75,
-    width: '50%',
+    width: '40%',
     backgroundColor: '#000000'
   },
   tabs: {
-    margin: '75px 75px 75px 150px',
+    margin: '75px 75px 75px 275px',
   },
   tab: {
       display: 'flex'
@@ -45,7 +74,38 @@ const styles = () => ({
   topTab: {
     margin: '0px 0px 100px 0px'
   },
+  btn3: {
+    color: 'white',
+    backgroundColor: '#0091c2',
+    float: 'right',
+    marginRight: 10,
+    marginBottom: 30,
+    marginTop: 85
+  }
 })
+
+const BootstrapInput = withStyles((theme) => ({
+  root: {
+    'label + &': {
+      marginTop: theme.spacing(3),
+    },
+  },
+  input: {
+    borderRadius: 4,
+    position: 'relative',
+    border: '1px solid #ced4da',
+    fontSize: 16,
+    color: 'white',
+    padding: '10px 26px 10px 12px',
+    transition: theme.transitions.create(['border-color', 'box-shadow']),
+    '&:focus': {
+      borderRadius: 4,
+      borderColor: '#0091c2',
+      boxShadow: '0 0 0 0.2rem rgba(0,145, 194,.25)',
+    },
+  },
+}))(InputBase)
+
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -112,15 +172,117 @@ class InitiateTransaction extends Component {
           />
         </Tabs>
         <TabPanel value={value} index={0} className={classes.panel}>
+          <div>
           <div className={classes.form}>
+            <form className={classes.main} autoComplete="off">
+              <FormControl className={classes.form2}>
+                <InputLabel classes={{root: classes.input}}>Transfer from...</InputLabel>
+                <NativeSelect
+                  classes={{
+                    icon: classes.icon
+                  }}
+                  // value={}
+                  // onChange={}
+                  input={<BootstrapInput />}
+                >
+                  <option aria-label="None" value="" />
+                  <option>SYB Checking</option>
+                  <option>SYB Money Market</option>
+                  <option>SYB Savings</option>
+                </NativeSelect>
+              </FormControl>
+              <FormControl className={classes.form2}>
+                <InputLabel classes={{root: classes.input}}>Transfer to...</InputLabel>
+                <NativeSelect
+                  classes={{
+                    icon: classes.icon
+                  }}
+                  // value={}
+                  // onChange={}
+                  input={<BootstrapInput />}
+                >
+                  <option aria-label="None" value="" />
+                  <option>SYB Checking</option>
+                  <option>SYB Money Market</option>
+                  <option>SYB Savings</option>
+                </NativeSelect>
+              </FormControl>
+               <FormControl className={classes.form2}>
+                <InputLabel classes={{root: classes.input}} >Amount</InputLabel>
+                <BootstrapInput />
+              </FormControl>
+              <FormControl className={classes.form2}>
+                <InputLabel classes={{root: classes.input}} >What's it for?</InputLabel>
+                <BootstrapInput />
+              </FormControl>
+            </form>
+            </div>
+            <Button className={classes.btn2}>Transfer</Button>
           </div>
         </TabPanel>
         <TabPanel value={value} index={1} className={classes.panel}>
+          <div>
           <div className={classes.form}>
+            <form className={classes.main} autoComplete="off">
+              <FormControl className={classes.form2}>
+                <InputLabel classes={{root: classes.input}}>Deposit into...</InputLabel>
+                <NativeSelect
+                  classes={{
+                    icon: classes.icon
+                  }}
+                  // value={}
+                  // onChange={}
+                  input={<BootstrapInput />}
+                >
+                  <option aria-label="None" value="" />
+                  <option>SYB Checking</option>
+                  <option>SYB Money Market</option>
+                  <option>SYB Savings</option>
+                </NativeSelect>
+              </FormControl>
+               <FormControl className={classes.form2}>
+                <InputLabel classes={{root: classes.input}} >Amount</InputLabel>
+                <BootstrapInput />
+              </FormControl>
+              <FormControl className={classes.form2}>
+                <InputLabel classes={{root: classes.input}} >What's it for?</InputLabel>
+                <BootstrapInput />
+              </FormControl>
+            </form>
+            </div>
+            <Button className={classes.btn3}>Deposit</Button>
           </div>
-        </TabPanel>
-        <TabPanel value={value} index={2} className={classes.panel}>
+        </TabPanel><TabPanel value={value} index={2} className={classes.panel}>
+          <div>
           <div className={classes.form}>
+            <form className={classes.main} autoComplete="off">
+              <FormControl className={classes.form2}>
+                <InputLabel classes={{root: classes.input}}>Withdraw from...</InputLabel>
+                <NativeSelect
+                  classes={{
+                    icon: classes.icon
+                  }}
+                  // value={}
+                  // onChange={}
+                  input={<BootstrapInput />}
+                >
+                  <option aria-label="None" value="" />
+                  <option>SYB Checking</option>
+                  <option>SYB Money Market</option>
+                  <option>SYB Savings</option>
+                </NativeSelect>
+              </FormControl>
+               <FormControl className={classes.form2}>
+                <InputLabel classes={{root: classes.input}} >Amount</InputLabel>
+                <BootstrapInput />
+              </FormControl>
+              <FormControl className={classes.form2}>
+                <InputLabel classes={{root: classes.input}} >What's it for?</InputLabel>
+                <BootstrapInput />
+              </FormControl>
+            </form>
+            </div>
+            <Button className={classes.btn3}>Withdraw</Button>
           </div>
         </TabPanel>
       </div>
