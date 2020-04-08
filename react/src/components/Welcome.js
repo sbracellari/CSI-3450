@@ -42,7 +42,7 @@ const styles = () => ({
 class Welcome extends Component {
     render() {
 
-    const { classes } = this.props
+    const { classes, setAdmin, setUser } = this.props
 
         return (
             <div className={classes.background}>
@@ -54,6 +54,7 @@ class Welcome extends Component {
                   classes={{root: classes.btn}}
                   component={Link}
                   to='/login'
+                  onClick={setAdmin}
                 >
                   An administrator
                 </Button>
@@ -62,6 +63,7 @@ class Welcome extends Component {
                   classes={{root: classes.btn}}
                   component={Link}
                   to='/login'
+                  onClick={setUser}
                 >
                   A SYB Bank Customer
                 </Button>

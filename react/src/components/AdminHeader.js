@@ -51,7 +51,10 @@ const styles = () => ({
       marginTop: 20
   },
   toolbar2: {
-      marginLeft: 150
+      marginLeft: 150,
+    width: '30%',
+    display: 'flex',
+    justifyContent: 'space-between'
   },
   logout: {
       color: 'white',
@@ -122,7 +125,6 @@ class AdminHeader extends Component {
             component={Link}
             to='/admin/pending-transactions'
             classes={{root: classes.btn}}
-            className={classes.toolbar2}
           >
             Pending transactions
           </Button>

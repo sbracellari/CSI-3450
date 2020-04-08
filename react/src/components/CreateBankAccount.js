@@ -43,7 +43,7 @@ const styles = () => ({
   },
   form: {
     width: 400,
-    marginTop: 70
+    marginTop: 50
   },
   main: {
     display: 'flex',
@@ -54,7 +54,7 @@ const styles = () => ({
     color: 'white',
     backgroundColor: '#0091c2',
     float: 'right',
-    marginTop: 200,
+    marginTop: 120,
     marginRight: 20
   },
 })
@@ -102,9 +102,13 @@ class CreateBankAccount extends Component {
                 >
                   <option aria-label="None" value="" />
                   <option>SYB Checking</option>
-                  <option>SYB Money Market</option>
                   <option>SYB Savings</option>
+                  <option>SYB Money Market</option>
                 </NativeSelect>
+              </FormControl>
+               <FormControl className={classes.form}>
+                <InputLabel classes={{root: classes.input}}>Starting Balance</InputLabel>
+                <BootstrapInput />
               </FormControl>
               <FormControl className={classes.form}>
                 <InputLabel classes={{root: classes.input}} >What's it for?</InputLabel>

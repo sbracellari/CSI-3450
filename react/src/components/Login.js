@@ -6,8 +6,7 @@ import TextField from '@material-ui/core/TextField'
 import Typography from '@material-ui/core/Typography'
 import { Link } from 'react-router-dom'
 import PersonIcon from '@material-ui/icons/Person'
-
-
+import { Redirect } from 'react-router-dom'
 
 const styles = () => ({
   background: {
@@ -84,19 +83,38 @@ const styles = () => ({
       marginTop: 15,
       marginBottom: 40
   }
-  
 })
 
 class Login extends Component {
     render() {
 
-    const { classes } = this.props
+    const { 
+      classes, 
+      handleEmail, 
+      handlePass,
+      logged_in,
+      login_err,
+      onLogin,
+      is_admin,
+      is_user
+    } = this.props
+
+      if (logged_in && is_admin) {
+        return <Redirect to='/admin/home' />
+      } else if (logged_in && is_user) {
+        return <Redirect to='/user/home' />
+      } 
 
         return (
             <div className={classes.background}>
                 <div className={classes.container}>
                   <div className={classes.img} />
                   <Typography className={classes.txt}>Take hold of your finances</Typography>
+                   {login_err && (
+                    <Typography className={classes.link}>
+                      Your email or password is incorrect.
+                    </Typography>
+                  )}
                   <form className={classes.text} noValidate autoComplete="off">
                     <div className={classes.top}>
                       <div className={classes.icon}><PersonIcon /></div> 
@@ -104,9 +122,8 @@ class Login extends Component {
                       InputProps={{
                           className: classes.input
                       }}
-           
-                      
-                      placeholder="username" />
+                      onChange={handleEmail}
+                      placeholder="email" />
                     </div>
                     <div className={classes.bottom}>
                       <div className={classes.icon}><LockOutlinedIcon /></div> 
@@ -114,10 +131,14 @@ class Login extends Component {
                       InputProps={{
                            className: classes.input
                       }}
+                      onChange={handlePass}
                       type="password" placeholder="password" />
                     </div>
                   </form> 
-                  <Button className={classes.btn}>
+                  <Button 
+                    className={classes.btn}
+                    onClick={onLogin}  
+                  >
                     login
                   </Button>
                 </div>

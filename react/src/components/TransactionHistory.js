@@ -10,6 +10,12 @@ import FormControl from '@material-ui/core/FormControl'
 import NativeSelect from '@material-ui/core/NativeSelect'
 import InputBase from '@material-ui/core/InputBase'
 import InputLabel from '@material-ui/core/InputLabel'
+import Table from '@material-ui/core/Table'
+import TableBody from '@material-ui/core/TableBody'
+import TableCell from '@material-ui/core/TableCell'
+import TableContainer from '@material-ui/core/TableContainer'
+import TableHead from '@material-ui/core/TableHead'
+import TableRow from '@material-ui/core/TableRow'
 
 const styles = () => ({
   background: {
@@ -25,8 +31,13 @@ const styles = () => ({
     float: 'right',
     margin: '-10px 30px 40px 0px'
   },
+  box: {
+    display: 'flex',
+    justifyContent: 'center'
+  },
   container: {
-    margin: '30px 70px 40px 70px'
+    margin: '30px 70px 40px 70px',
+    width: '60%'
   },
   content: {
     padding: 40,
@@ -36,8 +47,7 @@ const styles = () => ({
     margin: '5px 20px 20px 20px',
     backgroundColor: '#000000',
     borderRadius: 'none',
-    minHeight: '56vh',
-    height: '70vh',
+    minHeight: '45vh',
     padding: 10
   },
   title: {
@@ -68,7 +78,18 @@ const styles = () => ({
   main: {
     display: 'flex',
     justifyContent: 'space-between'
-  }
+  },
+  tblTitle: {
+    color: 'white',
+    fontFamily: 'Lemonada',
+    paddingBottom: 24,
+    fontSize: 18
+  },
+  body: {
+    color: 'white',
+    padding: 22,
+    fontSize: 18
+  },
 })
 
 const BootstrapInput = withStyles((theme) => ({
@@ -105,6 +126,7 @@ class TransactionHistory extends Component {
     const { dialogOpen } = this.state
     return (
       <div className={classes.background}>
+        <div className={classes.box}>
         <div className={classes.container}>
           <div className={classes.main}>
           <Typography className={classes.txt}>Transaction History</Typography>
@@ -120,13 +142,31 @@ class TransactionHistory extends Component {
                 input={<BootstrapInput />}
               >
                 <option>SYB Checking</option>
+                <option>SYB Savings</option>
                 <option>SYB Money Market</option>
               </NativeSelect>
             </FormControl>
           </form>
           </div>
           <div className={classes.paper}>
+            <TableContainer>
+                    <Table>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell className={classes.tblTitle} align="center">Update Amount</TableCell>
+                          <TableCell className={classes.tblTitle} align="center">Update Date</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                      <TableRow>
+                          <TableCell className={classes.body} align="center"></TableCell>
+                          <TableCell className={classes.body} align="center"></TableCell>
+                        </TableRow>
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
           </div>
+        </div>
         </div>
         <Button
           className={classes.btn}

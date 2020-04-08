@@ -10,7 +10,7 @@ const styles = () => ({
     backgroundImage: 'url(' + require('../img/syb-logo.png') + ')',
     height: '7vh',
     backgroundRepeat: 'no-repeat',
-    width: 150,
+    width: '15%',
     margin: 30
   },
   bar: {
@@ -34,12 +34,16 @@ const styles = () => ({
       textTransform: 'none'
   },
   toolbar1: {
-      marginTop: 15
+      marginTop: 15,
+      padding: 0,
+      display: 'flex',
+      justifyContent: 'space-evenly',
+      width: '60%'
   },
-  button: {
-      marginRight: 100,
-      marginLeft: 100
-  },
+  // button: {
+  //     marginRight: 100,
+  //     marginLeft: 100
+  // },
   txt: {
       color: 'white',
       fontSize: 16,
@@ -50,8 +54,10 @@ const styles = () => ({
   },
   display2: {
     display: 'flex',
-    justifyContent: 'space-between',
-    marginRight: 60
+    marginRight: 80,
+    paddingTop: 11,
+    width: '15%',
+    justifyContent: 'flex-end'
   },
 })
 

@@ -8,6 +8,12 @@ import CardContent from '@material-ui/core/CardContent'
 import CardActions from '@material-ui/core/CardActions'
 import ListItemText from '@material-ui/core/ListItemText'
 import { Link } from 'react-router-dom'
+import Table from '@material-ui/core/Table'
+import TableBody from '@material-ui/core/TableBody'
+import TableCell from '@material-ui/core/TableCell'
+import TableContainer from '@material-ui/core/TableContainer'
+import TableHead from '@material-ui/core/TableHead'
+import TableRow from '@material-ui/core/TableRow'
 
 const styles = () => ({
   background: {
@@ -97,6 +103,20 @@ const styles = () => ({
   },
   list: {
     paddingTop: 17
+  },
+  title: {
+    color: 'white',
+    fontFamily: 'Lemonada',
+    paddingBottom: 24,
+    fontSize: 16
+  },
+  body: {
+    color: 'white',
+    padding: 22,
+    fontSize: 16
+  },
+  content: {
+    margin: '20px 0px 20px 0px'
   }
 })
 
@@ -160,15 +180,26 @@ class UserHome extends Component {
             <Typography className={classes.txt}>Balances</Typography>
             <Paper className={classes.large}>
               <Card className={classes.card}>
-                <CardContent>
-                  <List>
-                  </List>
+                <CardContent className={classes.content}>
+                  <TableContainer>
+                    <Table>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell className={classes.title} align="center">Account Type</TableCell>
+                          <TableCell className={classes.title} align="center">Account Number</TableCell>
+                          <TableCell className={classes.title} align="center">Balance</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                      <TableRow>
+                          <TableCell className={classes.body} align="center"></TableCell>
+                          <TableCell className={classes.body} align="center"></TableCell>
+                          <TableCell className={classes.body} align="center"></TableCell>
+                        </TableRow>>
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
                 </CardContent>
-                <CardActions className={classes.actions}>
-                  <Button className={classes.infoBtn}>
-                    View more
-                  </Button>
-                </CardActions>
               </Card>
             </Paper>
           </Grid>

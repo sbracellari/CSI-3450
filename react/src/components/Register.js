@@ -88,7 +88,6 @@ class Register extends Component {
     render() {
 
     const { classes } = this.props
-
         return (
             <div className={classes.background}>
                 <div className={classes.container}>
@@ -123,7 +122,7 @@ class Register extends Component {
                       }}
            
                       
-                      placeholder="username" />
+                      placeholder="email" />
                     </div>
                     <div className={classes.top}>
                       <div className={classes.icon}><LockOutlinedIcon /></div> 
@@ -139,19 +138,17 @@ class Register extends Component {
                       InputProps={{
                           className: classes.input
                       }}
-           
-                      
-                      placeholder="phone" />
+                      placeholder="area code" />
                     </div>
                     <div className={classes.top}>
-                      <div className={classes.icon}><MailOutlinedIcon /></div> 
+                      <div className={classes.icon}><PhoneAndroidIcon /></div> 
                       <TextField 
                       InputProps={{
                           className: classes.input
                       }}
            
                       
-                      placeholder="email" />
+                      placeholder="phone" />
                     </div>
                   </form> 
                   <Button className={classes.btn}>

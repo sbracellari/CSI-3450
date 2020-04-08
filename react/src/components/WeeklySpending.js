@@ -6,6 +6,12 @@ import Dialog from '@material-ui/core/Dialog'
 import DialogActions from '@material-ui/core/DialogActions'
 import DialogContent from '@material-ui/core/DialogContent'
 import DialogTitle from '@material-ui/core/DialogTitle'
+import Table from '@material-ui/core/Table'
+import TableBody from '@material-ui/core/TableBody'
+import TableCell from '@material-ui/core/TableCell'
+import TableContainer from '@material-ui/core/TableContainer'
+import TableHead from '@material-ui/core/TableHead'
+import TableRow from '@material-ui/core/TableRow'
 
 const styles = () => ({
   background: {
@@ -21,8 +27,13 @@ const styles = () => ({
     float: 'right',
     margin: '-10px 30px 40px 0px'
   },
+  box: {
+    display: 'flex',
+    justifyContent: 'center'
+  },
   container: {
-    margin: '30px 70px 40px 70px'
+    margin: '60px 70px 40px 70px',
+    width: '60%'
   },
   content: {
     padding: 40,
@@ -32,7 +43,7 @@ const styles = () => ({
     margin: '5px 20px 20px 20px',
     backgroundColor: '#000000',
     borderRadius: 'none',
-    minHeight: '56vh',
+    minHeight: '45vh',
     padding: 10
   },
   title: {
@@ -42,11 +53,24 @@ const styles = () => ({
   txt: {
     fontFamily: 'Lemonada',
     fontSize: 20,
-    paddingLeft: 20
+    paddingLeft: 20,
+    paddingBottom: 5
   },
   warning: {
     margin: '40px 0px 0px 0px'
-  }
+  },
+  tblTitle: {
+    color: 'white',
+    fontFamily: 'Lemonada',
+    paddingBottom: 24,
+    fontSize: 18,
+    width: '50%'
+  },
+  body: {
+    color: 'white',
+    padding: 22,
+    fontSize: 18
+  },
 })
 
 class WeeklySpending extends Component {
@@ -61,10 +85,28 @@ class WeeklySpending extends Component {
     const { dialogOpen } = this.state
     return (
       <div className={classes.background}>
+        <div className={classes.box}>
         <div className={classes.container}>
           <Typography className={classes.txt}>Weekly Spending</Typography>
           <div className={classes.paper}>
+             <TableContainer>
+                    <Table>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell className={classes.tblTitle} align="center">Amount</TableCell>
+                          <TableCell className={classes.tblTitle} align="center">Week</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                      <TableRow>
+                          <TableCell className={classes.body} align="center"></TableCell>
+                          <TableCell className={classes.body} align="center"></TableCell>
+                        </TableRow>
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
           </div>
+        </div>
         </div>
         <Button
           className={classes.btn}

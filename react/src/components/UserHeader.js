@@ -48,7 +48,10 @@ const styles = () => ({
       marginTop: 20
   },
   toolbar2: {
-      marginLeft: 150
+      marginLeft: 150,
+          width: '65%',
+    display: 'flex',
+    justifyContent: 'space-between'
   },
   logout: {
       color: 'white',
@@ -119,7 +122,6 @@ class UserHeader extends Component {
             component={Link}
             to='/user/transaction-history'
             classes={{root: classes.btn}}
-            className={classes.toolbar2}
           >
             Transaction history
           </Button>
@@ -127,7 +129,6 @@ class UserHeader extends Component {
             component={Link}
             to='/user/weekly-spending'
             classes={{root: classes.btn}}
-            className={classes.toolbar2}
           >
             Spending by week
           </Button>
@@ -135,7 +136,6 @@ class UserHeader extends Component {
             component={Link}
             to='/user/create-bank-account'
             classes={{root: classes.btn}}
-            className={classes.toolbar2}
           >
             Create bank account
           </Button>
