@@ -13,3 +13,13 @@ CREATE_BANK_ACCOUNT = '''CALL createBankAccount(%d, %d, %d, %d)'''
 MODIFY_CUSTOMER = '''CALL modifyCustomer(%d, %s, %s, %d, %d, %s, %s, %d)'''
 
 REVIEW_TRANSACTION = '''CALL reviewTransaction(%d, %d)'''
+
+GET_WEEKLY_SPENDING = ''''''
+
+GET_TRANSACTION_HISTORY = ''''''
+
+GET_BALANCES = ''''''
+
+GET_MY_CUSTOMERS = ''''''
+
+GET_PENDING_TRANSACTIONS = ''''''
