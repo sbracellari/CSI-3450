@@ -113,7 +113,8 @@ class App extends Component {
 
   onLogin = () => {
     login(this.state.email).then((data) => {
-      let password = data.password
+      let password = data.password,
+      let user_id = data.user_id
 
       if (this.state.password === password) {
         this.setState({
@@ -121,7 +122,7 @@ class App extends Component {
           login_err: false
         })
 
-        localStorage.setItem('email', this.state.email)
+        localStorage.setItem('user_id', user_id)
 
         if (this.state.is_admin) {
           get_admin_details().then((admin_data) => {
@@ -155,7 +156,7 @@ class App extends Component {
       is_user: false
     })
 
-    localStorage.delete("email")
+    localStorage.delete("user_id")
   }
 
   onRegister = () => {
@@ -168,7 +169,7 @@ class App extends Component {
       this.state.phone
     ).then((data) => {
 
-      if (!data) {
+      if (data === null) {
         this.setState({
           logged_in: false,
           register_err: true,
@@ -185,7 +186,7 @@ class App extends Component {
         is_admin: false
       })
 
-      localStorage.setItem('email', this.state.email)
+      localStorage.setItem('user_id', data)
     })
   }
 

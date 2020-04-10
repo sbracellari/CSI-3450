@@ -36,7 +36,7 @@ export const register = async (first_name, last_name, email, password, area_code
       }),
     })
 
-    const data = response.ok
+    const data = await response.json()
     return data
   } catch (err) {
     return err
