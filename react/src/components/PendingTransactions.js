@@ -8,6 +8,7 @@ import TableContainer from '@material-ui/core/TableContainer'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
 import Button from '@material-ui/core/Button'
+import { Redirect } from 'react-router-dom'
 
 const styles = () => ({
   approve: {
@@ -58,7 +59,12 @@ const styles = () => ({
 
 class PendingTransactions extends Component {
     render () {
-        const { classes } = this.props
+      const { classes, pending_transactions, onApprove, onDeny, logged_in } = this.props
+    
+      if (!logged_in) {
+        return <Redirect to="/" />
+      }
+
         return (
             <div className={classes.background}>
               <div className={classes.container}>
@@ -74,7 +80,7 @@ class PendingTransactions extends Component {
                           <TableCell className={classes.tblTitle} align="center">Account To</TableCell>
                           <TableCell className={classes.tblTitle} align="center">Update Amount</TableCell>
                           <TableCell className={classes.tblTitle} align="center">Update Date</TableCell>
-                          <TableCell className={classes.tblTitle} align="center"></TableCell>
+                          <TableCell className={classes.tblTitle} align="center">Status</TableCell>
                         </TableRow>
                       </TableHead>
                       <TableBody>
@@ -86,8 +92,20 @@ class PendingTransactions extends Component {
                           <TableCell className={classes.body} align="center"></TableCell>
                           <TableCell className={classes.body} align="center"></TableCell>
                           <TableCell className={classes.approve} align="center">
-                            <Button size="small" className={classes.btn}>Approve</Button>
-                            <Button size="small" className={classes.btn}>Deny</Button>
+                            <Button 
+                              size="small" 
+                              className={classes.btn}
+                              onClick={() => onApprove(i)}
+                            >
+                              Approve
+                            </Button>
+                            <Button 
+                              size="small" 
+                              className={classes.btn}
+                              onClick={() => onDeny(i)}
+                            >
+                              Deny
+                            </Button> 
                           </TableCell>
                         </TableRow>
                       </TableBody>

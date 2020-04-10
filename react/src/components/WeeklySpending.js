@@ -1,17 +1,13 @@
 import React, { Component } from 'react'
 import { withStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
-import Button from '@material-ui/core/Button'
-import Dialog from '@material-ui/core/Dialog'
-import DialogActions from '@material-ui/core/DialogActions'
-import DialogContent from '@material-ui/core/DialogContent'
-import DialogTitle from '@material-ui/core/DialogTitle'
 import Table from '@material-ui/core/Table'
 import TableBody from '@material-ui/core/TableBody'
 import TableCell from '@material-ui/core/TableCell'
 import TableContainer from '@material-ui/core/TableContainer'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
+import { Redirect } from 'react-router-dom'
 
 const styles = () => ({
   background: {
@@ -74,15 +70,13 @@ const styles = () => ({
 })
 
 class WeeklySpending extends Component {
-  state={
-    dialogOpen: false
-  }
-  handleDialogClose = () => {
-    this.setState({ dialogOpen: false })
-  }
   render () {
-    const { classes } = this.props
-    const { dialogOpen } = this.state
+    const { classes, weekly_spending, logged_in } = this.props
+
+    if (!logged_in) {
+      return <Redirect to='/' />
+    }
+
     return (
       <div className={classes.background}>
         <div className={classes.box}>
@@ -108,32 +102,6 @@ class WeeklySpending extends Component {
           </div>
         </div>
         </div>
-        <Button
-          className={classes.btn}
-          onClick={() => this.setState({ dialogOpen: true })}
-        >
-          Close Account
-        </Button>
-        <Dialog
-          open={dialogOpen}
-          onClose={this.handleDialogClose}
-        >
-          <DialogTitle className={classes.title}>Close this Account?</DialogTitle>
-          <DialogContent className={classes.content}>
-            <Typography>Close your SYB Money Market account? <br /> This action cannot be undone.</Typography>
-          </DialogContent>
-          <DialogActions>
-            <Button 
-              autoFocus
-              onClick={this.handleDialogClose}
-            >
-              Cancel
-            </Button>
-            <Button>
-              Close Account
-            </Button>
-          </DialogActions>
-        </Dialog>
       </div>
     ) 
   }

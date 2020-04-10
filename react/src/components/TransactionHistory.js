@@ -16,6 +16,7 @@ import TableCell from '@material-ui/core/TableCell'
 import TableContainer from '@material-ui/core/TableContainer'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
+import { Redirect } from 'react-router-dom'
 
 const styles = () => ({
   background: {
@@ -122,8 +123,13 @@ class TransactionHistory extends Component {
     this.setState({ dialogOpen: false })
   }
   render () {
-    const { classes } = this.props
+    const { classes, logged_in, transaction_history, onAccountDelete } = this.props
     const { dialogOpen } = this.state
+
+    if (!logged_in) {
+      return <Redirect to='/'/>
+    }
+
     return (
       <div className={classes.background}>
         <div className={classes.box}>
@@ -141,9 +147,9 @@ class TransactionHistory extends Component {
                 // onChange={}
                 input={<BootstrapInput />}
               >
-                <option>SYB Checking</option>
-                <option>SYB Savings</option>
-                <option>SYB Money Market</option>
+                <option value={1}>SYB Checking</option>
+                <option value={2}>SYB Savings</option>
+                <option value={3}>SYB Money Market</option>
               </NativeSelect>
             </FormControl>
           </form>
@@ -189,7 +195,9 @@ class TransactionHistory extends Component {
             >
               Cancel
             </Button>
-            <Button>
+            <Button
+              onClick={onAccountDelete}
+            >
               Close Account
             </Button>
           </DialogActions>

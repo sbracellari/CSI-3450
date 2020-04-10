@@ -87,7 +87,16 @@ const styles = () => ({
 class Register extends Component {
     render() {
 
-    const { classes } = this.props
+    const { 
+      classes,
+      handleFirstName,
+      handleLastName,
+      handleAreaCode,
+      handlePhone,
+      handleEmail,
+      handlePass,
+      onRegister
+    } = this.props
         return (
             <div className={classes.background}>
                 <div className={classes.container}>
@@ -97,61 +106,69 @@ class Register extends Component {
                     <div className={classes.top}>
                       <div className={classes.icon}><PersonIcon /></div> 
                       <TextField 
-                      InputProps={{
+                        InputProps={{
                           className: classes.input
-                      }}
-           
-                      
-                      placeholder="first name" />
+                        }}
+                        onChange={handleFirstName}
+                        placeholder="first name" 
+                      />
                     </div>
                     <div className={classes.top}>
                       <div className={classes.icon}><PersonIcon /></div> 
                       <TextField 
-                      InputProps={{
+                        InputProps={{
                           className: classes.input
-                      }}
-           
-                      
-                      placeholder="last name" />
+                        }} 
+                        onChange={handleLastName}
+                        placeholder="last name" 
+                      />
                     </div>
                     <div className={classes.top}>
                       <div className={classes.icon}><MailOutlinedIcon /></div> 
                       <TextField 
-                      InputProps={{
+                        InputProps={{
                           className: classes.input
-                      }}
-           
-                      
-                      placeholder="email" />
+                        }}
+                        onChange={handleEmail}
+                        placeholder="email" 
+                      />
                     </div>
                     <div className={classes.top}>
                       <div className={classes.icon}><LockOutlinedIcon /></div> 
                       <TextField 
-                      InputProps={{
-                           className: classes.input
-                      }}
-                      type="password" placeholder="password" />
+                        InputProps={{
+                          className: classes.input
+                        }}
+                        type="password" 
+                        onChange={handlePass}
+                        placeholder="password" 
+                      />
                     </div>
                     <div className={classes.top}>
                       <div className={classes.icon}><PhoneAndroidIcon /></div> 
                       <TextField 
-                      InputProps={{
+                        InputProps={{
                           className: classes.input
-                      }}
-                      placeholder="area code" />
+                        }}
+                        placeholder="area code" 
+                        onChange={handleAreaCode}
+                      />
                     </div>
                     <div className={classes.top}>
                       <div className={classes.icon}><PhoneAndroidIcon /></div> 
                       <TextField 
-                      InputProps={{
+                        InputProps={{
                           className: classes.input
-                      }}
-           
-                      
-                      placeholder="phone" />
+                        }}
+                        onChange={handlePhone}
+                        placeholder="phone" 
+                      />
                     </div>
                   </form> 
-                  <Button className={classes.btn}>
+                  <Button 
+                    className={classes.btn}
+                    onClick={onRegister}
+                  >
                     Register
                   </Button>
                 </div>

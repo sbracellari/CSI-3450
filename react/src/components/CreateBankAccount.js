@@ -6,6 +6,7 @@ import InputBase from '@material-ui/core/InputBase'
 import FormControl from '@material-ui/core/FormControl'
 import InputLabel from '@material-ui/core/InputLabel'
 import Button from '@material-ui/core/Button'
+import { Redirect } from 'react-router-dom'
 
 const styles = () => ({
   background: {
@@ -83,7 +84,12 @@ const BootstrapInput = withStyles((theme) => ({
 
 class CreateBankAccount extends Component {
   render () {
-    const { classes } = this.props
+    const { classes, handleAccType, handleStartingBalance, createBankAccount, logged_in } = this.props
+
+    if (!logged_in) {
+      return <Redirect to='/' />
+    }
+
     return (
       <div className={classes.background}>
         <div className={classes.container}>
@@ -96,18 +102,22 @@ class CreateBankAccount extends Component {
                   classes={{
                     icon: classes.icon
                   }}
-                  // value={}
-                  // onChange={}
+                  onChange={handleAccType}
                   input={<BootstrapInput />}
                 >
                   <option aria-label="None" value="" />
-                  <option>SYB Checking</option>
-                  <option>SYB Savings</option>
-                  <option>SYB Money Market</option>
+                  <option value={1}>SYB Checking</option>
+                  <option value={2}>SYB Savings</option>
+                  <option value={3}>SYB Money Market</option>
                 </NativeSelect>
               </FormControl>
                <FormControl className={classes.form}>
-                <InputLabel classes={{root: classes.input}}>Starting Balance</InputLabel>
+                <InputLabel 
+                  classes={{root: classes.input}}
+                  onChange={handleStartingBalance}
+                >
+                  Starting Balance
+                </InputLabel>
                 <BootstrapInput />
               </FormControl>
               <FormControl className={classes.form}>
@@ -115,7 +125,12 @@ class CreateBankAccount extends Component {
                 <BootstrapInput />
               </FormControl>
             </form>
-            <Button className={classes.btn}>Create Account</Button>
+            <Button 
+              className={classes.btn}
+              onClick={createBankAccount}
+            >
+              Create Account
+            </Button>
           </div>
         </div>
       </div>

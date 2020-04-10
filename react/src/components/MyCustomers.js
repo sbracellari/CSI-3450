@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { withStyles } from '@material-ui/core/styles'
 import { Typography } from '@material-ui/core'
-import MaterialTable from 'material-table'
 import EditIcon from '@material-ui/icons/Edit'
 import Table from '@material-ui/core/Table'
 import TableBody from '@material-ui/core/TableBody'
@@ -10,6 +9,10 @@ import TableContainer from '@material-ui/core/TableContainer'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
 import Input from '@material-ui/core/Input'
+import IconButton from '@material-ui/core/IconButton'
+import CheckIcon from '@material-ui/icons/Check'
+import ClearIcon from '@material-ui/icons/Clear'
+import { Redirect } from 'react-router-dom'
 
 const styles = () => ({
   background: {
@@ -29,6 +32,10 @@ const styles = () => ({
     minHeight: '40vh',
     padding: 10
   },
+  icon: {
+    color: 'white',
+    textAlign: 'center'
+  },
   txt: {
     fontFamily: 'Lemonada',
     fontSize: 20,
@@ -45,92 +52,46 @@ const styles = () => ({
     padding: 22,
     fontSize: 18
   },
+  btns: {
+    display: 'flex',
+    width: 70,
+    justifyContent: 'center'
+  }
 })
 
 class MyCustomers extends Component {
-    constructor(props) {
-      super(props)
-
-          this.state = {
-      columns: [
-        {
-          title: 'Name', field: 'name',
-          editComponent: props => (
-            <input
-              type="text"
-              value={props.value}
-              onChange={e => props.onChange(e.target.value)}
-            />
-          )
-        },
-        { title: 'Surname', field: 'surname' },
-        { title: 'Birth Year', field: 'birthYear', type: 'numeric' },
-        {
-          title: 'Birth Place',
-          field: 'birthCity',
-          lookup: { 34: 'İstanbul', 63: 'Şanlıurfa' },
-        },
-      ],
-      data: [
-        { name: 'Mehmet', surname: 'Baran', birthYear: 1987, birthCity: 63 },
-        { name: 'Zerya Betül', surname: 'Baran', birthYear: 2017, birthCity: 34 },
-      ]
-    }
-  }
-    
+    state={
+      disabled: true,
+      input_first_name: '',
+      input_last_name: '',
+      input_area_code: '',
+      input_phone: '',
+      input_email: '',
+      input_password: ''
+    } 
+  
     render () {
-        const { classes } = this.props
+        const { 
+          classes, 
+          first_name, 
+          last_name, 
+          area_code, 
+          phone, 
+          email, 
+          password, 
+          logged_in,
+          onCustomerChange
+        } = this.props
+
+      if (!logged_in) { 
+        return <Redirect to='/' />
+      }
+
         return (
             <div className={classes.background}>
               <div className={classes.container}>
                 <Typography className={classes.txt}>Your Customers</Typography>
                 <div className={classes.paper}>
-                  {/* <MaterialTable
-                    columns={this.state.columns}
-                    data={this.state.data}        
-                    // actions={[
-                    //   {
-                    //     icon: () => <EditIcon style={{color: 'white'}}/>,
-                    //     tooltip: 'Edit Customer Information',
-                    //     onClick: (event, rowData) =>  {
-                          
-                    //     }
-                    //   }
-                    // ]}
-                    options={{
-                      actionsColumnIndex: -1,
-                      search: false,
-                      toolbar: false,
-                      paging: false,
-                      draggable: false,
-                      headerStyle: {
-                        backgroundColor: '#000000',
-                        color: 'white'
-                        // textAlign: 'center'
-                      },
-                      rowStyle: {
-                        backgroundColor: '#000000',
-                        color: 'white',
-                      },
-                      cellStyle: {
-                        textAlign: 'center'
-                      }
-                    }}
-                    editable={{
-                      onRowUpdate: (newData, oldData) =>
-                        new Promise((resolve, reject) => {
-                        setTimeout(() => {
-                          {
-                            const data = this.state.data;
-                            const index = data.indexOf(oldData);
-                            data[index] = newData;
-                            this.setState({ data }, () => resolve());
-                          }
-                          resolve()
-                        }, 1000)
-                      }),
-                    }}
-                  /> */}
                   <TableContainer>
                     <Table>
                       <TableHead>
@@ -148,15 +109,88 @@ class MyCustomers extends Component {
                       <TableRow>
                           <TableCell className={classes.body} align="center">
                             <form className={classes.root} noValidate autoComplete="off">
-                              <Input defaultValue="Disabled" disabled  />
+                              <Input 
+                                classes={{
+                                  input: classes.icon
+                                }}
+                                defaultValue={first_name} 
+                                disabled={this.state.disabled}  
+                              />
                             </form>
                           </TableCell>
-                          <TableCell className={classes.body} align="center"></TableCell>
-                          <TableCell className={classes.body} align="center"></TableCell>
-                          <TableCell className={classes.body} align="center"></TableCell>
-                          <TableCell className={classes.body} align="center"></TableCell>
-                          <TableCell className={classes.body} align="center"></TableCell>
-                          <TableCell className={classes.body} align="center"><EditIcon style={{color: 'white'}} /></TableCell>
+                          <TableCell className={classes.body} align="center">
+                            <form className={classes.root} noValidate autoComplete="off">
+                              <Input 
+                                classes={{
+                                  input: classes.icon
+                                }}
+                                defaultValue={last_name} 
+                                disabled={this.state.disabled}  
+                              />
+                            </form>
+                          </TableCell>
+                          <TableCell className={classes.body} align="center">
+                            <form className={classes.root} noValidate autoComplete="off">
+                              <Input 
+                                classes={{
+                                  input: classes.icon
+                                }}
+                                defaultValue={area_code} 
+                                disabled={this.state.disabled}  
+                              />
+                            </form>
+                          </TableCell>
+                          <TableCell className={classes.body} align="center">
+                            <form className={classes.root} noValidate autoComplete="off">
+                              <Input 
+                                classes={{
+                                  input: classes.icon
+                                }}
+                                defaultValue={phone}
+                                disabled={this.state.disabled}  
+                              />
+                            </form>
+                          </TableCell>
+                          <TableCell className={classes.body} align="center">
+                            <form className={classes.root} noValidate autoComplete="off">
+                              <Input 
+                                classes={{
+                                  input: classes.icon
+                                }}
+                                defaultValue={email}
+                                disabled={this.state.disabled}  
+                              />
+                            </form>
+                          </TableCell>
+                          <TableCell className={classes.body} align="center">
+                            <form className={classes.root} noValidate autoComplete="off">
+                              <Input 
+                                classes={{
+                                  input: classes.icon
+                                }}
+                                defaultValue={password} 
+                                disabled={this.state.disabled} 
+                              />
+                            </form>
+                          </TableCell>
+                          <TableCell className={classes.body} align="center">
+                            {this.state.disabled ? (
+                              <div className={classes.btns}>
+                            <IconButton onClick={() => this.setState({ disabled: false })}>
+                              <EditIcon className={classes.icon} />
+                            </IconButton>
+                            </div>
+                            ) : (
+                              <div className={classes.btns}>
+                                <IconButton onClick={onCustomerChange}>
+                                  <CheckIcon className={classes.icon} />
+                                </IconButton>
+                                <IconButton onClick={() => this.setState({ disabled: true })}>
+                                  <ClearIcon className={classes.icon} />
+                                </IconButton>
+                              </div>
+                            )}
+                          </TableCell>
                         </TableRow>
                       </TableBody>
                     </Table>

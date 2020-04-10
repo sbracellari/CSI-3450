@@ -7,7 +7,7 @@ import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
 import CardActions from '@material-ui/core/CardActions'
 import ListItemText from '@material-ui/core/ListItemText'
-import { Link } from 'react-router-dom'
+import { Link, Redirect } from 'react-router-dom'
 import Table from '@material-ui/core/Table'
 import TableBody from '@material-ui/core/TableBody'
 import TableCell from '@material-ui/core/TableCell'
@@ -122,7 +122,12 @@ const styles = () => ({
 
 class UserHome extends Component {
   render() {
-    const { classes } = this.props
+    const { classes, weekly_spending, transaction_history, balances, logged_in } = this.props
+
+    if (!logged_in) {
+      return <Redirect to="/" />
+    }
+
     return (
       <div className={classes.background}>
         <div className={classes.img} />

@@ -6,7 +6,7 @@ import { Typography, Button, List } from '@material-ui/core'
 import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
 import CardActions from '@material-ui/core/CardActions'
-import { Link } from 'react-router-dom'
+import { Link, Redirect } from 'react-router-dom'
 
 const styles = () => ({
   background: {
@@ -58,7 +58,12 @@ const styles = () => ({
 
 class AdminHome extends Component {
   render() {
-    const { classes } = this.props
+    const { classes, admin_data, logged_in } = this.props
+
+    if (!logged_in) {
+      return <Redirect to="/" />
+    }
+
     return (
       <div className={classes.background}>
         <div className={classes.img} />
