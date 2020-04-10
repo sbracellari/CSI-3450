@@ -4,13 +4,13 @@ LOGIN = '''CALL login(%s)'''
 #`createUserAccount`(fname varchar(20), lname varchar(20), areacode int(3), phone int(7), email varchar(45), pass varchar(20))
 CREATE_USER_ACCOUNT = '''CALL createUserAccount(%s, %s, %d, %d, %s, %s)'''
 
-#`withdraw`(ACCT1 int(11), amount double, cusID int(11))
+#`withdraw`(ACCTnum int(11), amount double, cusID int(11))
 WITHDRAW = '''CALL withdraw(%d, %d, %d)'''
 
-#`deposit`(ACCT1 int(11), amount double, cusID int(11))
+#`deposit`(ACCTnum int(11), amount double, cusID int(11))
 DEPOSIT = '''CALL deposit(%d, %d, %d)'''
 
-#`transfer`(ACCT1 int(11), ACCT2 int(11), amount double, cusID int(11))
+#`transfer`(ACCTnum1 int(11), ACCTnum2 int(11), amount double, cusID int(11))
 TRANSFER = '''CALL transfer(%d, %d, %d, %d)'''
 
 #`createBankAccount`(accttype int(11), acctbal double, cusid int(11))
