@@ -1,27 +1,41 @@
+#`login`(email varchar(45))
 LOGIN = '''CALL login(%s)'''
 
+#`createUserAccount`(fname varchar(20), lname varchar(20), areacode int(3), phone int(7), email varchar(45), pass varchar(20))
 CREATE_USER_ACCOUNT = '''CALL createUserAccount(%s, %s, %d, %d, %s, %s)'''
 
+#`withdraw`(ACCT1 int(11), amount double, cusID int(11))
 WITHDRAW = '''CALL withdraw(%d, %d, %d)'''
 
+#`deposit`(ACCT1 int(11), amount double, cusID int(11))
 DEPOSIT = '''CALL deposit(%d, %d, %d)'''
 
+#`transfer`(ACCT1 int(11), ACCT2 int(11), amount double, cusID int(11))
 TRANSFER = '''CALL transfer(%d, %d, %d, %d)'''
 
+#`createBankAccount`(accttype int(11), acctbal double, cusid int(11))
 CREATE_BANK_ACCOUNT = '''CALL createBankAccount(%d, %d, %d)'''
 
+#`modifyCustomer`(userid int(11), fname varchar(20), lname varchar(20), areacode int(3), phone int(7), email varchar(45), pass varchar(20))
 MODIFY_CUSTOMER = '''CALL modifyCustomer(%d, %s, %s, %d, %d, %s, %s)'''
 
+#`reviewTransaction`(transid int(11), approved tinyint(1))
 REVIEW_TRANSACTION = '''CALL reviewTransaction(%d, %d)'''
 
-GET_WEEKLY_SPENDING = ''''''
+#`weeklyTransactions`(cusid int(11))
+GET_WEEKLY_SPENDING = '''CALL weeklyTransactions(%d)'''
 
-GET_TRANSACTION_HISTORY = ''''''
+#`transactionHistory`(cusid int(11), acctnum int(11))
+GET_TRANSACTION_HISTORY = '''CALL transactionHistory(%d, %d)'''
 
-GET_BALANCES = ''''''
+#`getBalances`(cusId int(11))
+GET_BALANCES = '''CALL getBalances(%d)'''
 
-GET_CUSTOMERS = ''''''
+#`getCustomers`(empid int(11))
+GET_CUSTOMERS = '''CALL getCustomers(%d)'''
 
-GET_PENDING_TRANSACTIONS = ''''''
+#`viewTransactionsAdmin`(empid int(11))
+GET_PENDING_TRANSACTIONS = '''CALL viewTransactionsAdmin(%d)'''
 
-DELETE_ACCOUNT = ''''''
+#`deleteBankAccount`(acctnum int(11))
+DELETE_ACCOUNT = '''CALL deleteBankAccount(%d)'''
