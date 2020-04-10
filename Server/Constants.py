@@ -8,9 +8,9 @@ DEPOSIT = '''CALL deposit(%d, %d, %d)'''
 
 TRANSFER = '''CALL transfer(%d, %d, %d, %d)'''
 
-CREATE_BANK_ACCOUNT = '''CALL createBankAccount(%d, %d, %d, %d)'''
+CREATE_BANK_ACCOUNT = '''CALL createBankAccount(%d, %d, %d)'''
 
-MODIFY_CUSTOMER = '''CALL modifyCustomer(%d, %s, %s, %d, %d, %s, %s, %d)'''
+MODIFY_CUSTOMER = '''CALL modifyCustomer(%d, %s, %s, %d, %d, %s, %s)'''
 
 REVIEW_TRANSACTION = '''CALL reviewTransaction(%d, %d)'''
 
