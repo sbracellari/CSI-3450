@@ -113,7 +113,7 @@ class App extends Component {
 
   onLogin = () => {
     login(this.state.email).then((data) => {
-      let password = data.password,
+      let password = data.password
       let user_id = data.user_id
 
       if (this.state.password === password) {
