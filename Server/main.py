@@ -26,7 +26,14 @@ def test():
 def login():
     email = request.json.get('email')
 
-    cur.execute(Constants.LOGIN, [email], multi=True)
+    data = [] 
+
+    cur.callproc('login', [email])
+    for set in cur.stored_results():
+        for row in set:
+            data.append(dict(zip(set.column_names,row)))
+
+    return jsonify({'LOGIN_DATA':data})
 
 
 # MAIN ACTOR: USER
@@ -54,7 +61,7 @@ def register():
 # will be generated on transfer creation
 @app.route('/syb-bank/withdraw', methods=['POST'])
 def withdraw():
-    user_id = s.read_local_storage() # <- theoretical name of the fcn to read from local storage
+    user_id = s.read_local_storage()
     acc_from = request.json.get('acc_from')
     amt = request.json.get('amt')
 
@@ -149,15 +156,31 @@ def review_transaction():
 # OUTPUT: displays user's balances, weekly transactions, and transaction history
 @app.route('/syb-bank/user-details', methods=['GET'])
 def get_user_details():
-    user_id = s.read_local_storage()
+    # user_id = s.read_local_storage()
+    user_id = 2
 
-    user_details_map = {
-        'balances', cur.execute(Constants.GET_BALANCES, [user_id]),
-        'transaction_history', cur.execute(Constants.GET_TRANSACTION_HISTORY, [user_id]),
-        'weekly_spending', cur.execute(Constants.GET_WEEKLY_SPENDING, [user_id])
-    }
+    balances, transaction_history, weekly_transactions = [], [], []
 
-    return user_details_map
+    cur.callproc('getBalances', [user_id])
+    for set in cur.stored_results():
+        for row in set:
+            balances.append(dict(zip(set.column_names,row)))
+
+    # cur.callproc('transactionHistory', [user_id])
+    # for set in cur.stored_results():
+    #     for row in set:
+    #         transaction_history.append(dict(zip(set.column_names,row)))
+
+    cur.callproc('weeklyTransactions', [user_id])
+    for set in cur.stored_results():
+        for row in set:
+            weekly_transactions.append(dict(zip(set.column_names,row)))
+
+    return jsonify({
+        'BALANCES': balances, 
+        # 'TRANSACTION_HISTORY': transaction_history,
+        'WEEKLY_TRANSACTIONS': weekly_transactions
+    })
 
 # MAIN ACTOR: ADMINISTRATOR
 # PREDICTED QUERIES TO BE USED: MySQL SELECT
@@ -168,20 +191,25 @@ def get_user_details():
 @app.route('/syb-bank/admin-details', methods=['GET'])
 def get_admin_details():
     # user_id = s.read_local_storage()
-
     user_id = 1
 
-    c, p = [], []
+    customers, pending_transactions = [], []
 
     cur.callproc('getCustomers', [user_id])
-    for result in cur.stored_results():
-        c.append(result.fetchall())
+    for set in cur.stored_results():
+        for row in set:
+            customers.append(dict(zip(set.column_names,row)))
 
-    cur.callproc('viewTransactionAdmin', [user_id])
-    for result in cur.stored_results():
-        p.append(result.fetchall())
 
-    return jsonify({'customers': c, 'pending_transactions': p})
+    cur.callproc('viewTransactionsAdmin', [user_id])
+    for set in cur.stored_results():
+        for row in set:
+            pending_transactions.append(dict(zip(set.column_names,row)))
+
+    return jsonify({
+        'CUSTOMERS': customers, 
+        'PENDING_TRANSACTIONS': pending_transactions
+    })
 
 # MAIN ACTOR: USER
 # PREDICTED QUERIES TO BE USED: MySQL DELETE
