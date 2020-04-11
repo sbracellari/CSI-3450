@@ -10,6 +10,10 @@ import FormControl from '@material-ui/core/FormControl'
 import InputLabel from '@material-ui/core/InputLabel'
 import Button from '@material-ui/core/Button'
 import { Redirect } from 'react-router-dom'
+import Snackbar from '@material-ui/core/Snackbar'
+import ClearIcon from '@material-ui/icons/Clear'
+import IconButton from '@material-ui/core/IconButton'
+import Input from '@material-ui/core/Input'
 
 const styles = () => ({
   background: {
@@ -51,7 +55,8 @@ const styles = () => ({
     backgroundColor: '#0091c2',
     float: 'right',
     marginRight: 10,
-    marginBottom: 30
+    marginBottom: 30,
+    marginTop: -10
   },
   form: {
     display: 'flex',
@@ -82,6 +87,9 @@ const styles = () => ({
     marginRight: 10,
     marginBottom: 30,
     marginTop: 85
+  },
+  amt: {
+    padding: '15px 0px 0px 0px'
   }
 })
 
@@ -89,7 +97,7 @@ const BootstrapInput = withStyles((theme) => ({
   root: {
     'label + &': {
       marginTop: theme.spacing(3),
-    },
+    }
   },
   input: {
     borderRadius: 4,
@@ -136,16 +144,14 @@ class InitiateTransaction extends Component {
   render() {
     const { 
       classes, 
-      acc_from, 
-      acc_to, 
-      amount, 
       onTransfer, 
       onDeposit, 
       onWithdraw,
       handleAccFrom,
       handleAccTo,
       handleAmt,
-      logged_in
+      logged_in,
+      accounts
     } = this.props
     const { value } = this.state
 
@@ -155,6 +161,32 @@ class InitiateTransaction extends Component {
 
     return (
       <div className={classes.background}>
+        <Snackbar
+            action={
+              <React.Fragment>
+                <IconButton
+                  aria-label='close'
+                  color='inherit'
+                  onClick={this.handleSnackbarClose}
+                  size='small'
+                >
+                  <ClearIcon fontSize='small' />
+                </IconButton>
+              </React.Fragment>
+            }
+            anchorOrigin={{
+              horizontal: 'center',
+              vertical: 'bottom'
+            }}
+            autoHideDuration={6000}
+            onClose={this.handleSnackbarClose}
+            open={this.state.snackbar}
+            message={
+              this.state.modify_err 
+                ? 'Could not modify customer information at this time.' 
+                : 'Customer information was successfully modified.'
+            }
+          />
         <Tabs
           className={classes.tabs}
           centered="true"
@@ -191,7 +223,7 @@ class InitiateTransaction extends Component {
         <TabPanel value={value} index={0} className={classes.panel}>
           <div>
           <div className={classes.form}>
-            <form className={classes.main} autoComplete="off">
+            <div className={classes.main} autoComplete="off">
               <FormControl className={classes.form2}>
                 <InputLabel classes={{root: classes.input}}>Transfer from...</InputLabel>
                 <NativeSelect
@@ -201,10 +233,10 @@ class InitiateTransaction extends Component {
                   onChange={handleAccFrom}
                   input={<BootstrapInput />}
                 >
-                  <option aria-label="None" value="" />
-                  <option value={1}>SYB Checking</option>
-                  <option value={2}>SYB Money Market</option>
-                  <option value={3}>SYB Savings</option>
+                  <option>None</option>
+                {accounts.map((accounts, i) =>
+                  <option key={i}>{accounts.ACCT_NUMBER}</option>
+                )}
                 </NativeSelect>
               </FormControl>
               <FormControl className={classes.form2}>
@@ -216,27 +248,29 @@ class InitiateTransaction extends Component {
                   onChange={handleAccTo}
                   input={<BootstrapInput />}
                 >
-                  <option aria-label="None" value="" />
-                  <option value={1}>SYB Checking</option>
-                  <option value={2}>SYB Money Market</option>
-                  <option value={3}>SYB Savings</option>
+                  <option>None</option>
+                {accounts.map((accounts, i) =>
+                  <option key={i}>{accounts.ACCT_NUMBER}</option>
+                )}
                 </NativeSelect>
               </FormControl>
                <FormControl
                 className={classes.form2}>
-                <InputLabel 
+                <BootstrapInput
                   classes={{root: classes.input}} 
                   onChange={handleAmt}
-                >
-                  Amount
-                </InputLabel>
-                <BootstrapInput />
+                  defaultValue="Amount..."
+                  style={classes.amt}
+                />
+                  {/* Amount */}
+                {/* </Input> */}
+                {/* <BootstrapInput /> */}
               </FormControl>
               <FormControl className={classes.form2}>
                 <InputLabel classes={{root: classes.input}} >What's it for?</InputLabel>
                 <BootstrapInput />
               </FormControl>
-            </form>
+            </div>
             </div>
             <Button 
               className={classes.btn2}
@@ -259,10 +293,10 @@ class InitiateTransaction extends Component {
                   onChange={handleAccTo}
                   input={<BootstrapInput />}
                 >
-                  <option aria-label="None" value="" />
-                  <option value={1}>SYB Checking</option>
-                  <option value={2}>SYB Money Market</option>
-                  <option value={3}>SYB Savings</option>
+                  <option>None</option>
+                {accounts.map((accounts, i) =>
+                  <option key={i}>{accounts.ACCT_NUMBER}</option>
+                )}
                 </NativeSelect>
               </FormControl>
                <FormControl className={classes.form2}>
@@ -300,10 +334,10 @@ class InitiateTransaction extends Component {
                   onChange={handleAccFrom}
                   input={<BootstrapInput />}
                 >
-                  <option aria-label="None" value="" />
-                  <option value={1}>SYB Checking</option>
-                  <option value={2}>SYB Money Market</option>
-                  <option value={3}>SYB Savings</option>
+                  <option>None</option>
+                {accounts.map((accounts, i) =>
+                  <option key={i}>{accounts.ACCT_NUMBER}</option>
+                )}
                 </NativeSelect>
               </FormControl>
                <FormControl className={classes.form2}>

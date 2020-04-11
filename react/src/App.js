@@ -3,8 +3,7 @@ import { withStyles } from '@material-ui/core/styles'
 
 import {
   BrowserRouter as Router,
-  Route,
-  Redirect,
+  Route
 } from "react-router-dom"
 
 import Welcome from './components/Welcome'
@@ -33,7 +32,8 @@ import {
   create_bank_account,
   modify_customer,
   review_transaction,
-  delete_account
+  delete_account,
+  get_transaction_history
 } from './api/api'
 
 const styles = () => ({
@@ -63,22 +63,21 @@ class App extends Component {
     weekly_spending: [],
     balances: [],
     pending_transactions: [],
-    customers: []
+    customers: [],
+    accounts: [],
+    account_num: 0,
   }
 
   setAdmin = () => {
-    this.setState({ admin: true, user: false })
-    console.log("is admin: " + this.state.is_admin)
-    console.log("is user: " + this.state.is_user)
+    this.setState({ is_admin: true, is_user: false })
   }
 
   setUser = () => {
-    this.setState({ user: true, admin: false })
-    console.log("is admin: " + this.state.is_admin)
-    console.log("is user: " + this.state.is_user)
+    this.setState({ is_user: true, is_admin: false })
   }
 
   onTransfer = () => {
+    console.log(this.state.acc_from, this.state.acc_to, this.state.amount)
     transfer(
       this.state.acc_from,
       this.state.acc_to,
@@ -113,8 +112,8 @@ class App extends Component {
 
   onLogin = () => {
     login(this.state.email).then((data) => {
-      let password = data.password
-      let user_id = data.user_id
+      let password = data[0].USER_PASS
+      let user_id = data[0].USER_ID
 
       if (this.state.password === password) {
         this.setState({
@@ -127,20 +126,18 @@ class App extends Component {
         if (this.state.is_admin) {
           get_admin_details().then((admin_data) => {
             this.setState({ 
-              pending_transactions: admin_data.pending_transactions,
-              customers: admin_data.customers 
+              pending_transactions: admin_data.PENDING_TRANSACTIONS,
+              customers: admin_data.CUSTOMERS 
             })
           })
-          return <Redirect to='/admin/home' />
         } else {
           get_user_details().then((user_data) => {
             this.setState({ 
-              transaction_history: user_data.transaction_history,
-              weekly_spending: user_data.weekly_spending,
-              balances: user_data.balances 
+              accounts: user_data.ACCOUNTS,
+              weekly_spending: user_data.WEEKLY_TRANSACTIONS,
+              balances: user_data.BALANCES
             })
           })
-          return <Redirect to='/user/home' />
         }
 
       } else {
@@ -156,7 +153,7 @@ class App extends Component {
       is_user: false
     })
 
-    localStorage.delete("user_id")
+    localStorage.removeItem("user_id")
   }
 
   onRegister = () => {
@@ -188,17 +185,6 @@ class App extends Component {
 
       localStorage.setItem('user_id', data)
     })
-  }
-
-  onCustomerChange = () => {
-    modify_customer(
-      this.state.first_name,
-      this.state.last_name, 
-      this.state.area_code,
-      this.state.phone,
-      this.state.email,
-      this.state.password
-    )
   }
 
   handleEmail = (event) =>  {
@@ -248,23 +234,37 @@ class App extends Component {
   onApprove = (i) => {
     this.setState({ approved: true })
 
+    console.log(this.state.pending_transactions[i].TRANS_ID)
+
     review_transaction(
-      this.state.pending_transactions[i].transaction_id, 
+      this.state.pending_transactions[i].TRANS_ID, 
       this.state.approved
     ).then(data => {
       
-      this.setState({ pending_transactions: data })
+      this.setState({ pending_transactions: data.PENDING_TRANSACTIONS })
+    })
+  }
+  
+  handleAccChange = event => {
+    this.setState({ account_num: event.target.value })
+
+
+    get_transaction_history(event.target.value).then(data => {
+      this.setState({ transaction_history: data.TRANSACTION_HISTORY })
     })
   }
 
   onDeny = (i) => {
     this.setState({ approved: false })
 
+        console.log(this.state.pending_transactions[i].TRANS_ID)
+
+
     review_transaction(
-      this.state.pending_transactions[i].transaction_id, 
+      this.state.pending_transactions[i].TRANS_ID, 
       this.state.approved).then(data => {
       
-      this.setState({ pending_transactions: data })
+      this.setState({ pending_transactions: data.PENDING_TRANSACTIONS })
     })
   }
 
@@ -287,7 +287,9 @@ class App extends Component {
       customers,
       transaction_history,
       weekly_spending,
-      balances
+      balances,
+      accounts,
+      account_num
     } = this.state
 
     return (
@@ -297,7 +299,10 @@ class App extends Component {
             render={props => (props.location.pathname === '/admin/home'
             || props.location.pathname === '/admin/my-customers'
             || props.location.pathname === '/admin/pending-transactions')
-            && <AdminHeader /> }
+            && <AdminHeader 
+                 onLogout={this.onLogout}
+               /> 
+            }
           />  
           <Route
             render={props => (props.location.pathname === '/user/home'
@@ -305,7 +310,10 @@ class App extends Component {
             || props.location.pathname === '/user/transaction-history'
             || props.location.pathname === '/user/weekly-spending'
             || props.location.pathname === '/user/create-bank-account')
-            && <UserHeader /> }
+            && <UserHeader
+                 onLogout={this.onLogout}
+              /> 
+            }
           />
           <Route 
             render={props => props.location.pathname !== '/' 
@@ -319,6 +327,9 @@ class App extends Component {
               <Welcome 
                 setAdmin={this.setAdmin}
                 setUser={this.setUser}
+                is_admin={is_admin}
+                is_user={is_user}
+                logged_in={logged_in}
               />
             )}  
           />
@@ -369,6 +380,7 @@ class App extends Component {
                 transaction_history={transaction_history}
                 weekly_spending={weekly_spending}
                 logged_in={logged_in}
+                balances={balances}
               />
             )}
           />
@@ -376,14 +388,8 @@ class App extends Component {
             exact path='/admin/my-customers' 
             render={() => (
               <MyCustomers 
-                first_name={first_name}
-                last_name={last_name}
-                area_code={area_code}
-                phone={phone}
-                email={email}
-                password={password}
                 logged_in={logged_in}
-                onCustomerChange={this.onCustomerChange}
+                customers={customers}
               />
             )}
           />
@@ -395,7 +401,6 @@ class App extends Component {
                 pending_transactions={pending_transactions}
                 onApprove={this.onApprove}
                 onDeny={this.onDeny}
-                logged_in={logged_in}
               />
             )}
           />
@@ -413,6 +418,7 @@ class App extends Component {
                 handleAccFrom={this.handleAccFrom}
                 handleAccTo={this.handleAccTo}
                 handleAmt={this.handleAmt}
+                accounts={accounts}
               />
             )}
           />
@@ -423,6 +429,9 @@ class App extends Component {
                 transaction_history={transaction_history}
                 logged_in={logged_in}
                 onAccountDelete={this.onAccountDelete}
+                accounts={accounts}
+                account_num={account_num}
+                handleAccChange={this.handleAccChange}
               />
             )}
           />

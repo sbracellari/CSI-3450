@@ -4,14 +4,16 @@ from flask import Flask, jsonify, request
 from requests import get
 import Constants
 import scraper as s
+from flask_cors import CORS
 
-#Database connection
+# Database connection
 bankdb = mysql.connector.connect(user='admin', password='SYBBankisawesome1234', host='sybbank.c2ao7w5qbjh5.us-east-2.rds.amazonaws.com', database='sybbank')
 
 cur = bankdb.cursor(dictionary=True)
 
-#Flask initialization
+# Flask initialization
 app = Flask(__name__)
+CORS(app)
 
 @app.route('/test', methods=['GET'])
 def test():
@@ -22,7 +24,7 @@ def test():
 # METHOD PURPOSE: login to account
 # INPUT PARAMETERS: only params needed for the SQL query are email
 # OUTPUT: displays the correct home page, depending on if the user is an admin or a customer
-@app.route('/syb-bank/login', methods=['GET'])
+@app.route('/syb-bank/login', methods=['POST'])
 def login():
     email = request.json.get('email')
 
@@ -32,9 +34,7 @@ def login():
     for set in cur.stored_results():
         for row in set:
             data.append(dict(zip(set.column_names,row)))
-
-    return jsonify({'LOGIN_DATA':data})
-
+    return jsonify(data)
 
 # MAIN ACTOR: USER
 # PREDICTED QUERIES TO BE USED: MySQL INSERT
@@ -50,7 +50,7 @@ def register():
     email = request.json.get('email')
     password = request.json.get('password')
 
-    return cur.execute(Constants.CREATE_USER_ACCOUNT, [first_name, last_name, area_code, phone, email, password])
+    return cur.callproc('createUserAccount', [first_name, last_name, area_code, phone, email, password])
 
 # MAIN ACTOR: USER
 # PREDICTED QUERIES TO BE USED: MySQL INSERT
@@ -65,7 +65,7 @@ def withdraw():
     acc_from = request.json.get('acc_from')
     amt = request.json.get('amt')
 
-    return cur.execute(Constants.WITHDRAW, [acc_from, amt, user_id])
+    return cur.callproc('withdraw', [acc_from, amt, user_id])
 
 # MAIN ACTOR: USER
 # PREDICTED QUERIES TO BE USED: MySQL INSERT
@@ -80,7 +80,7 @@ def deposit():
     acc_to = request.json.get('acc_from')
     amt = request.json.get('amt')
 
-    return cur.execute(Constants.DEPOSIT, [acc_to, amt, user_id])
+    return cur.callproc('deposit', [acc_to, amt, user_id])
 
 # MAIN ACTOR: USER
 # PREDICTED QUERIES TO BE USED: MySQL INSERT
@@ -94,9 +94,9 @@ def transfer():
     user_id = s.read_local_storage()
     acc_from = request.json.get('acc_from')
     acc_to = request.json.get('acc_to')
-    amt = request.json.get('amt')
+    amt = request.json.get('amount')
 
-    return cur.execute(Constants.TRANSFER, [acc_from, acc_to, amt, user_id])
+    return cur.callproc('transfer', [acc_from, acc_to, amt, user_id])
 
 # MAIN ACTOR: USER
 # PREDICTED QUERIES TO BE USED: MySQL INSERT
@@ -113,7 +113,7 @@ def create_bank_account():
     acc_type = request.json.get('acc_type')
     starting_balance = request.json.get('starting_balance')
 
-    return cur.execute(Constants.CREATE_BANK_ACCOUNT, [acc_type, starting_balance, user_id])
+    return cur.callproc('createBankAccont', [acc_type, starting_balance, user_id])
 
 # MAIN ACTOR: ADMINISTRATOR
 # PREDICTED QUERIES TO BE USED: MySQL UPDATE
@@ -122,15 +122,26 @@ def create_bank_account():
 # OUTPUT: the selected account will be updated in the USER table
 @app.route('/syb-bank/modify-customer', methods=['POST'])
 def modify_customer():
-    user_id = s.read_local_storage()
-    first_name = request.json.get('first_name')
-    last_name = request.json.get('last_name')
-    area_code = request.json.get('area_code')
-    phone = request.json.get('phone')
-    email = request.json.get('email')
-    password = request.json.get('password')
+    try:
+        user_id = request.json.get('user_id')
+        first_name = request.json.get('first_name')
+        last_name = request.json.get('last_name')
+        area_code = request.json.get('area_code')
+        phone = request.json.get('phone')
+        email = request.json.get('email')
+        password = request.json.get('password')
 
-    return cur.execute(Constants.MODIFY_CUSTOMER, [user_id, first_name, last_name, area_code, phone, email, password])
+        cur.callproc('modifyCustomer', [user_id, first_name, last_name, area_code, phone, email, password])
+        res = []
+        for set in cur.stored_results():
+            for row in set:
+                res.append(dict(zip(set.column_names,row)))
+                
+        return jsonify({
+            'RES': res
+        })
+    except user_id is None:
+        return jsonify([])
 
 # MAIN ACTOR: ADMINISTRATOR
 # PREDICTED QUERIES TO BE USED: MySQL UPDATE
@@ -142,45 +153,80 @@ def modify_customer():
 # field will be updated with a value of true or false
 @app.route('/syb-bank/review-transaction', methods=['POST'])
 def review_transaction():
-    user_id = s.read_local_storage()
-    trans_id = request.json.get('trans_id')
-    approved = request.json.get('approved')
+    try: 
+        user_id = s.read_local_storage()
+        trans_id = request.json.get('trans_id')
+        approved = request.json.get('approved')
+        pending_transactions = []
 
-    return cur.execute(Constants.REVIEW_TRANSACTION, [trans_id, approved])
+        cur.callproc('reviewTransaction', [trans_id, approved])
+        for set in cur.stored_results():
+            for row in set:
+                pending_transactions.append(dict(zip(set.column_names,row)))
+            
+        return jsonify({
+            'PENDING_TRANSACTIONS': pending_transactions
+        })
+    except user_id is None:
+        return jsonify([])
 
 # MAIN ACTOR: USER
 # PREDICTED QUERIES TO BE USED: MySQL SELECT
 # METHOD PURPOSE: to grab the 3 main components of the user's information - 
-# their weekly spending, their account balances, and their transaction history per account
+# their weekly spending, their account balances, and a list of all of their active accounts
 # INPUT PARAMETERS: only param needed is user_id
-# OUTPUT: displays user's balances, weekly transactions, and transaction history
+# OUTPUT: displays user's balances, weekly transactions, and a list of their active accounts
 @app.route('/syb-bank/user-details', methods=['GET'])
 def get_user_details():
-    # user_id = s.read_local_storage()
-    user_id = 2
-
-    balances, transaction_history, weekly_transactions = [], [], []
+    user_id = s.read_local_storage()
+    balances, accounts, weekly_transactions = [], [], []
+    debit_card_usage = 0
 
     cur.callproc('getBalances', [user_id])
     for set in cur.stored_results():
         for row in set:
             balances.append(dict(zip(set.column_names,row)))
 
-    # cur.callproc('transactionHistory', [user_id])
-    # for set in cur.stored_results():
-    #     for row in set:
-    #         transaction_history.append(dict(zip(set.column_names,row)))
+    cur.callproc('getAccounts', [user_id])
+    for set in cur.stored_results():
+        for row in set:
+            accounts.append(dict(zip(set.column_names,row)))
 
     cur.callproc('weeklyTransactions', [user_id])
     for set in cur.stored_results():
         for row in set:
             weekly_transactions.append(dict(zip(set.column_names,row)))
+    
+    cur.callproc('debitCardUsage', [user_id])
+    for set in cur.stored_results():
+        for row in set:
+            debit_card_usage = dict(zip(set.column_names,row))
 
     return jsonify({
         'BALANCES': balances, 
-        # 'TRANSACTION_HISTORY': transaction_history,
-        'WEEKLY_TRANSACTIONS': weekly_transactions
+        'ACCOUNTS': accounts,
+        'WEEKLY_TRANSACTIONS': weekly_transactions,
+        'DEBIT_CARD_USAGE': debit_card_usage
     })
+
+# MAIN ACTOR: USER
+# PREDICTED QUERIES TO BE USED: MySQL SELECT
+# METHOD PURPOSE: to grab the transaction history of a specified account
+# INPUT PARAMETERS: only param needed is user_id and account_number
+# OUTPUT: displays user's transaction history for a specified account
+@app.route('/syb-bank/transaction-history', methods=['POST'])
+def get_transaction_history():
+    user_id = s.read_local_storage()
+    account_num = request.json.get('account_num')
+    transaction_history = []
+
+    cur.callproc('transactionsHistory', [user_id, account_num])
+    for set in cur.stored_results():
+        for row in set:
+            transaction_history.append(dict(zip(set.column_names,row)))
+    return jsonify({
+        'TRANSACTION_HISTORY': transaction_history
+     })
 
 # MAIN ACTOR: ADMINISTRATOR
 # PREDICTED QUERIES TO BE USED: MySQL SELECT
@@ -191,6 +237,7 @@ def get_user_details():
 @app.route('/syb-bank/admin-details', methods=['GET'])
 def get_admin_details():
     # user_id = s.read_local_storage()
+
     user_id = 1
 
     customers, pending_transactions = [], []
@@ -221,6 +268,6 @@ def delete_account():
     user_id = s.read_local_storage()
     account_number = request.json.get('account_num')
 
-    return cur.execute(Constants.DELETE_ACCOUNT, [account_number])
+    return cur.callproc('deleteBankAccount', [account_number])
 
 app.run()

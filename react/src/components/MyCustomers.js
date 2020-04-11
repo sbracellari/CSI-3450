@@ -13,6 +13,9 @@ import IconButton from '@material-ui/core/IconButton'
 import CheckIcon from '@material-ui/icons/Check'
 import ClearIcon from '@material-ui/icons/Clear'
 import { Redirect } from 'react-router-dom'
+import Snackbar from '@material-ui/core/Snackbar'
+
+import { modify_customer } from '../api/api'
 
 const styles = () => ({
   background: {
@@ -56,6 +59,11 @@ const styles = () => ({
     display: 'flex',
     width: 70,
     justifyContent: 'center'
+  },
+  data: {
+    fontFamily: 'Lemonada',
+    fontSize: 16,
+    textAlign: 'center'
   }
 })
 
@@ -67,20 +75,42 @@ class MyCustomers extends Component {
       input_area_code: '',
       input_phone: '',
       input_email: '',
-      input_password: ''
+      input_password: '',
+      user_id: 0,
+      modify_err: false,
+      snackbar: false
     } 
   
+    onCustomerChange = i => {
+      modify_customer(
+        this.props.customers[i].user_id,
+        this.state.input_first_name,
+        this.state.input_last_name,
+        this.state.input_area_code,
+        this.state.input_phone,
+        this.state.input_email,
+        this.state.input_password
+    ).then(data => {
+      console.log(data)
+      this.setState({ modify_err: !data, snackbar: true, disabled: true })
+    })
+  }
+
+    handleSnackbarClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return
+    }
+
+    this.setState({ 
+      snackbar: false
+    })
+  }
+
     render () {
         const { 
-          classes, 
-          first_name, 
-          last_name, 
-          area_code, 
-          phone, 
-          email, 
-          password, 
+          classes,  
           logged_in,
-          onCustomerChange
+          customers,
         } = this.props
 
       if (!logged_in) { 
@@ -89,13 +119,43 @@ class MyCustomers extends Component {
 
         return (
             <div className={classes.background}>
+              <Snackbar
+            action={
+              <React.Fragment>
+                <IconButton
+                  aria-label='close'
+                  color='inherit'
+                  onClick={this.handleSnackbarClose}
+                  size='small'
+                >
+                  <ClearIcon fontSize='small' />
+                </IconButton>
+              </React.Fragment>
+            }
+            anchorOrigin={{
+              horizontal: 'center',
+              vertical: 'bottom'
+            }}
+            autoHideDuration={6000}
+            onClose={this.handleSnackbarClose}
+            open={this.state.snackbar}
+            message={
+              this.state.modify_err 
+                ? 'Could not modify customer information at this time.' 
+                : 'Customer information was successfully modified.'
+            }
+          />
               <div className={classes.container}>
                 <Typography className={classes.txt}>Your Customers</Typography>
                 <div className={classes.paper}>
-                  <TableContainer>
+                  {customers.length === 0 ? (
+                    <Typography className={classes.data}>No data to display at this time.</Typography>
+                  ) : (
+                     <TableContainer>
                     <Table>
                       <TableHead>
                         <TableRow>
+                          <TableCell className={classes.tblTitle} align="center">Customer ID</TableCell>
                           <TableCell className={classes.tblTitle} align="center">First Name</TableCell>
                           <TableCell className={classes.tblTitle} align="center">Last Name</TableCell>
                           <TableCell className={classes.tblTitle} align="center">Area Code</TableCell>
@@ -106,14 +166,19 @@ class MyCustomers extends Component {
                         </TableRow>
                       </TableHead>
                       <TableBody>
-                      <TableRow>
+                        {customers.map((customers, i) => 
+                        <TableRow key={i}>
+                          <TableCell className={classes.body} align="center">
+                            {customers.USER_ID}
+                          </TableCell>
                           <TableCell className={classes.body} align="center">
                             <form className={classes.root} noValidate autoComplete="off">
                               <Input 
                                 classes={{
                                   input: classes.icon
                                 }}
-                                defaultValue={first_name} 
+                                onChange={(event) => {this.setState({ input_first_name: event.target.value})}}
+                                defaultValue={customers.USER_FNAME} 
                                 disabled={this.state.disabled}  
                               />
                             </form>
@@ -124,7 +189,8 @@ class MyCustomers extends Component {
                                 classes={{
                                   input: classes.icon
                                 }}
-                                defaultValue={last_name} 
+                                onChange={(event) => {this.setState({ input_last_name: event.target.value})}}
+                                defaultValue={customers.USER_LNAME} 
                                 disabled={this.state.disabled}  
                               />
                             </form>
@@ -135,7 +201,8 @@ class MyCustomers extends Component {
                                 classes={{
                                   input: classes.icon
                                 }}
-                                defaultValue={area_code} 
+                                onChange={(event) => {this.setState({ input_area_code: event.target.value})}}
+                                defaultValue={customers.USER_AREACODE} 
                                 disabled={this.state.disabled}  
                               />
                             </form>
@@ -146,7 +213,8 @@ class MyCustomers extends Component {
                                 classes={{
                                   input: classes.icon
                                 }}
-                                defaultValue={phone}
+                                onChange={(event) => {this.setState({ input_phone: event.target.value})}}
+                                defaultValue={customers.USER_PHONE}
                                 disabled={this.state.disabled}  
                               />
                             </form>
@@ -157,7 +225,8 @@ class MyCustomers extends Component {
                                 classes={{
                                   input: classes.icon
                                 }}
-                                defaultValue={email}
+                                onChange={(event) => {this.setState({ input_email: event.target.value})}}
+                                defaultValue={customers.USER_EMAIL}
                                 disabled={this.state.disabled}  
                               />
                             </form>
@@ -168,7 +237,8 @@ class MyCustomers extends Component {
                                 classes={{
                                   input: classes.icon
                                 }}
-                                defaultValue={password} 
+                                onChange={(event) => {this.setState({ input_password: event.target.value})}}
+                                defaultValue={customers.USER_PASS} 
                                 disabled={this.state.disabled} 
                               />
                             </form>
@@ -182,7 +252,7 @@ class MyCustomers extends Component {
                             </div>
                             ) : (
                               <div className={classes.btns}>
-                                <IconButton onClick={onCustomerChange}>
+                                <IconButton onClick={() => this.onCustomerChange(i)}>
                                   <CheckIcon className={classes.icon} />
                                 </IconButton>
                                 <IconButton onClick={() => this.setState({ disabled: true })}>
@@ -192,9 +262,12 @@ class MyCustomers extends Component {
                             )}
                           </TableCell>
                         </TableRow>
+                        )}
+                      
                       </TableBody>
                     </Table>
                   </TableContainer>
+                  )}
                 </div>
               </div>
             </div>

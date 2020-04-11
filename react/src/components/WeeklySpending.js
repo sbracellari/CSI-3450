@@ -67,6 +67,11 @@ const styles = () => ({
     padding: 22,
     fontSize: 18
   },
+  data: {
+    fontFamily: 'Lemonada',
+    fontSize: 16,
+    textAlign: 'center'
+  }
 })
 
 class WeeklySpending extends Component {
@@ -83,22 +88,28 @@ class WeeklySpending extends Component {
         <div className={classes.container}>
           <Typography className={classes.txt}>Weekly Spending</Typography>
           <div className={classes.paper}>
-             <TableContainer>
-                    <Table>
-                      <TableHead>
-                        <TableRow>
-                          <TableCell className={classes.tblTitle} align="center">Amount</TableCell>
-                          <TableCell className={classes.tblTitle} align="center">Week</TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                      <TableRow>
-                          <TableCell className={classes.body} align="center"></TableCell>
-                          <TableCell className={classes.body} align="center"></TableCell>
-                        </TableRow>
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
+            {weekly_spending.length === 0 ? (
+              <Typography className={classes.data}>No data to display at this time.</Typography>
+            ) : (
+              <TableContainer>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell className={classes.tblTitle} align="center">Amount</TableCell>
+                      <TableCell className={classes.tblTitle} align="center">Week</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {weekly_spending.map((spending, i) =>
+                      <TableRow key={i}>
+                        <TableCell className={classes.body} align="center">{spending.UPDATE_AMOUNT}</TableCell>
+                        <TableCell className={classes.body} align="center">{spending.UPDATE_DATE}</TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            )}
           </div>
         </div>
         </div>

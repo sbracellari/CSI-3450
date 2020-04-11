@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { withStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
-import { Link } from 'react-router-dom'
+import { Link, Redirect } from 'react-router-dom'
 
 const styles = () => ({
   background: {
@@ -42,7 +42,13 @@ const styles = () => ({
 class Welcome extends Component {
     render() {
 
-    const { classes, setAdmin, setUser } = this.props
+    const { classes, setAdmin, setUser, is_admin, is_user, logged_in } = this.props
+
+    if (logged_in && is_admin) {
+      return <Redirect to='/admin/home' />
+    } else if (logged_in && is_user) {
+      return <Redirect to='/user/home' />
+    }
 
         return (
             <div className={classes.background}>

@@ -75,7 +75,7 @@ const styles = () => ({
 
 class UserHeader extends Component {
   render() {
-    const { classes } = this.props
+    const { classes, onLogout } = this.props
     return (
       <div className={classes.root}>
       <AppBar
@@ -144,6 +144,7 @@ class UserHeader extends Component {
         classes={{root: classes.logout}}
         className={classes.button}
         component={Link}
+        onClick={onLogout}
         to='/'
       >
         LOGOUT

@@ -117,6 +117,11 @@ const styles = () => ({
   },
   content: {
     margin: '20px 0px 20px 0px'
+  },
+  data: {
+    fontFamily: 'Lemonada',
+    fontSize: 16,
+    textAlign: 'center'
   }
 })
 
@@ -186,24 +191,30 @@ class UserHome extends Component {
             <Paper className={classes.large}>
               <Card className={classes.card}>
                 <CardContent className={classes.content}>
-                  <TableContainer>
-                    <Table>
-                      <TableHead>
-                        <TableRow>
-                          <TableCell className={classes.title} align="center">Account Type</TableCell>
-                          <TableCell className={classes.title} align="center">Account Number</TableCell>
-                          <TableCell className={classes.title} align="center">Balance</TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                      <TableRow>
-                          <TableCell className={classes.body} align="center"></TableCell>
-                          <TableCell className={classes.body} align="center"></TableCell>
-                          <TableCell className={classes.body} align="center"></TableCell>
-                        </TableRow>>
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
+                  {balances.length === 0 ? (
+                    <Typography className={classes.data}>No data to display at this time.</Typography>
+                  ) : (
+                    <TableContainer>
+                      <Table>
+                        <TableHead>
+                          <TableRow>
+                            <TableCell className={classes.title} align="center">Account Type</TableCell>
+                            <TableCell className={classes.title} align="center">Account Number</TableCell>
+                            <TableCell className={classes.title} align="center">Balance</TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {balances.map((balances, i) => 
+                            <TableRow key={i}>
+                              <TableCell className={classes.body} align="center">{balances.ACCT_TYPE}</TableCell>
+                              <TableCell className={classes.body} align="center">{balances.ACCT_NUMBER}</TableCell>
+                              <TableCell className={classes.body} align="center">{balances.ACCT_BALANCE}</TableCell>
+                            </TableRow>
+                          )}
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                  )}
                 </CardContent>
               </Card>
             </Paper>

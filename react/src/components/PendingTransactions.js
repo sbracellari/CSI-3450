@@ -54,6 +54,11 @@ const styles = () => ({
       color: 'white',
       backgroundColor: '#0091c2',
       margin: 2
+  },
+  data: {
+    fontFamily: 'Lemonada',
+    fontSize: 16,
+    textAlign: 'center'
   }
 })
 
@@ -70,7 +75,10 @@ class PendingTransactions extends Component {
               <div className={classes.container}>
                 <Typography className={classes.txt}>Pending Transactions</Typography>
                 <div className={classes.paper}>
-                   <TableContainer>
+                  {pending_transactions.length === 0 ? (
+                    <Typography className={classes.data}>No data to display at this time.</Typography>
+                  ) : (
+                    <TableContainer>
                     <Table>
                       <TableHead>
                         <TableRow>
@@ -84,13 +92,14 @@ class PendingTransactions extends Component {
                         </TableRow>
                       </TableHead>
                       <TableBody>
-                      <TableRow>
-                          <TableCell className={classes.body} align="center"></TableCell>
-                          <TableCell className={classes.body} align="center"></TableCell>
-                          <TableCell className={classes.body} align="center"></TableCell>
-                          <TableCell className={classes.body} align="center"></TableCell>
-                          <TableCell className={classes.body} align="center"></TableCell>
-                          <TableCell className={classes.body} align="center"></TableCell>
+                        {pending_transactions.map((transactions, i) =>
+                        <TableRow key={i}>
+                          <TableCell className={classes.body} align="center">{transactions.TRANS_ID}</TableCell>
+                          <TableCell className={classes.body} align="center">{transactions.CUS_ID}</TableCell>
+                          <TableCell className={classes.body} align="center">{transactions.ACCT_FROM}</TableCell>
+                          <TableCell className={classes.body} align="center">{transactions.ACCT_TO}</TableCell>
+                          <TableCell className={classes.body} align="center">{transactions.UPDATE_AMT}</TableCell>
+                          <TableCell className={classes.body} align="center">{transactions.UPDATE_DATE}</TableCell>
                           <TableCell className={classes.approve} align="center">
                             <Button 
                               size="small" 
@@ -108,9 +117,11 @@ class PendingTransactions extends Component {
                             </Button> 
                           </TableCell>
                         </TableRow>
+                        )}
                       </TableBody>
                     </Table>
                   </TableContainer>
+                  )}
                 </div>
               </div>
             </div>

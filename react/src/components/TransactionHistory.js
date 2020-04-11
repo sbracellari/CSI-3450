@@ -91,6 +91,11 @@ const styles = () => ({
     padding: 22,
     fontSize: 18
   },
+  data: {
+    fontFamily: 'Lemonada',
+    fontSize: 16,
+    textAlign: 'center'
+  }
 })
 
 const BootstrapInput = withStyles((theme) => ({
@@ -123,7 +128,7 @@ class TransactionHistory extends Component {
     this.setState({ dialogOpen: false })
   }
   render () {
-    const { classes, logged_in, transaction_history, onAccountDelete } = this.props
+    const { classes, logged_in, transaction_history, onAccountDelete, accounts, handleAccChange } = this.props
     const { dialogOpen } = this.state
 
     if (!logged_in) {
@@ -143,34 +148,43 @@ class TransactionHistory extends Component {
                 classes={{
                   icon: classes.icon
                 }}
-                // value={}
-                // onChange={}
+                onChange={handleAccChange}
                 input={<BootstrapInput />}
               >
-                <option value={1}>SYB Checking</option>
-                <option value={2}>SYB Savings</option>
-                <option value={3}>SYB Money Market</option>
+                  <option>None</option>
+                {accounts.map((accounts, i) =>
+                  <option key={i}>{accounts.ACCT_NUMBER}</option>
+                )}
               </NativeSelect>
             </FormControl>
           </form>
           </div>
           <div className={classes.paper}>
-            <TableContainer>
-                    <Table>
-                      <TableHead>
-                        <TableRow>
-                          <TableCell className={classes.tblTitle} align="center">Update Amount</TableCell>
-                          <TableCell className={classes.tblTitle} align="center">Update Date</TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                      <TableRow>
-                          <TableCell className={classes.body} align="center"></TableCell>
-                          <TableCell className={classes.body} align="center"></TableCell>
-                        </TableRow>
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
+            {transaction_history.length === 0 ? (
+              <Typography className={classes.data}>No data to display at this time.</Typography>
+            ) : (
+              <TableContainer>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell className={classes.tblTitle} align="center">Update Amount</TableCell>
+                      <TableCell className={classes.tblTitle} align="center">Update Date</TableCell>
+                      <TableCell className={classes.tblTitle} align="center">Status</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {transaction_history.map((history, i) => 
+                      <TableRow key={i}>
+                        <TableCell className={classes.body} align="center">{history.UPDATE_AMOUNT}</TableCell>
+                        <TableCell className={classes.body} align="center">{history.UPDATE_DATE}</TableCell>
+                        <TableCell className={classes.body} align="center">{history.APPROVED}</TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            )}
+            
           </div>
         </div>
         </div>
