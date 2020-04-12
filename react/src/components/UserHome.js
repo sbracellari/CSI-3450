@@ -127,7 +127,7 @@ const styles = () => ({
 
 class UserHome extends Component {
   render() {
-    const { classes, weekly_spending, transaction_history, balances, logged_in } = this.props
+    const { classes, weekly_spending, transaction_history, balances, logged_in, debit_card_usage } = this.props
 
     if (!logged_in) {
       return <Redirect to="/" />
@@ -152,7 +152,7 @@ class UserHome extends Component {
                 <List className={classes.list}>
                   <ListItem>
                     <ListItemText
-                    primary="Debit card usage this week: "
+                    primary={`Debit card usage this week: $${debit_card_usage}`}
                     classes={{
                       primary: classes.primary
                     }}
@@ -208,7 +208,7 @@ class UserHome extends Component {
                             <TableRow key={i}>
                               <TableCell className={classes.body} align="center">{balances.ACCT_TYPE}</TableCell>
                               <TableCell className={classes.body} align="center">{balances.ACCT_NUMBER}</TableCell>
-                              <TableCell className={classes.body} align="center">{balances.ACCT_BALANCE}</TableCell>
+                              <TableCell className={classes.body} align="center">${balances.ACCT_BALANCE}</TableCell>
                             </TableRow>
                           )}
                         </TableBody>

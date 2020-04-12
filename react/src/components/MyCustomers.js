@@ -32,7 +32,7 @@ const styles = () => ({
     margin: '5px 20px 20px 20px',
     backgroundColor: '#000000',
     borderRadius: 'none',
-    minHeight: '40vh',
+    minHeight: '56vh',
     padding: 10
   },
   icon: {
@@ -64,6 +64,11 @@ const styles = () => ({
     fontFamily: 'Lemonada',
     fontSize: 16,
     textAlign: 'center'
+  },
+  underline: {
+    "&:after": {
+      borderBottom: '2px solid #0091c2'
+    }
   }
 })
 
@@ -80,21 +85,6 @@ class MyCustomers extends Component {
       modify_err: false,
       snackbar: false
     } 
-  
-    onCustomerChange = i => {
-      modify_customer(
-        this.props.customers[i].user_id,
-        this.state.input_first_name,
-        this.state.input_last_name,
-        this.state.input_area_code,
-        this.state.input_phone,
-        this.state.input_email,
-        this.state.input_password
-    ).then(data => {
-      console.log(data)
-      this.setState({ modify_err: !data, snackbar: true, disabled: true })
-    })
-  }
 
     handleSnackbarClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -106,11 +96,42 @@ class MyCustomers extends Component {
     })
   }
 
+  onEdit = i => {
+    this.setState({
+      user_id: this.props.customers[i].USER_ID,
+      input_first_name: this.props.customers[i].USER_FNAME,
+      input_last_name: this.props.customers[i].USER_LNAME,
+      input_area_code: this.props.customers[i].USER_AREACODE,
+      input_phone: this.props.customers[i].USER_PHONE,
+      input_email: this.props.customers[i].USER_EMAIL,
+      input_password: this.props.customers[i].USER_PASS,
+      disabled: false
+    })
+  }
+
+  onCustomerChange = () => {
+      modify_customer(
+        this.state.user_id,
+        this.state.input_first_name,
+        this.state.input_last_name,
+        this.state.input_area_code,
+        this.state.input_phone,
+        this.state.input_email,
+        this.state.input_password
+    ).then(data => {
+      this.setState({ 
+        modify_err: !data, 
+        snackbar: true, 
+        disabled: true 
+      })
+    })
+  }
+
     render () {
         const { 
           classes,  
           logged_in,
-          customers,
+          customers
         } = this.props
 
       if (!logged_in) { 
@@ -162,23 +183,37 @@ class MyCustomers extends Component {
                           <TableCell className={classes.tblTitle} align="center">Phone</TableCell>
                           <TableCell className={classes.tblTitle} align="center">Email</TableCell>
                           <TableCell className={classes.tblTitle} align="center">Password</TableCell>
-                          <TableCell className={classes.tblTitle} align="center"></TableCell>
+                          <TableCell className={classes.tblTitle} align="center">Edit</TableCell>
                         </TableRow>
                       </TableHead>
                       <TableBody>
-                        {customers.map((customers, i) => 
+                        {customers.map((customer, i) => 
                         <TableRow key={i}>
                           <TableCell className={classes.body} align="center">
-                            {customers.USER_ID}
+                            {customer.USER_ID}
                           </TableCell>
                           <TableCell className={classes.body} align="center">
                             <form className={classes.root} noValidate autoComplete="off">
                               <Input 
                                 classes={{
-                                  input: classes.icon
+                                  input: classes.icon,
+                                  underline: classes.underline
                                 }}
-                                onChange={(event) => {this.setState({ input_first_name: event.target.value})}}
-                                defaultValue={customers.USER_FNAME} 
+                                onChange={(event) => this.setState({ input_first_name: event.target.value })}
+                                defaultValue={customer.USER_FNAME} 
+                                disabled={this.state.disabled}
+                              />
+                            </form>
+                          </TableCell>
+                          <TableCell className={classes.body} align="center">
+                            <form className={classes.root} noValidate autoComplete="off">
+                              <Input 
+                                classes={{
+                                  input: classes.icon,
+                                  underline: classes.underline
+                                }}
+                                onChange={(event) => this.setState({ input_last_name: event.target.value })}
+                                defaultValue={customer.USER_LNAME} 
                                 disabled={this.state.disabled}  
                               />
                             </form>
@@ -187,10 +222,11 @@ class MyCustomers extends Component {
                             <form className={classes.root} noValidate autoComplete="off">
                               <Input 
                                 classes={{
-                                  input: classes.icon
+                                  input: classes.icon,
+                                  underline: classes.underline
                                 }}
-                                onChange={(event) => {this.setState({ input_last_name: event.target.value})}}
-                                defaultValue={customers.USER_LNAME} 
+                                onChange={(event) => this.setState({ input_area_code: event.target.value })}
+                                defaultValue={customer.USER_AREACODE} 
                                 disabled={this.state.disabled}  
                               />
                             </form>
@@ -199,10 +235,24 @@ class MyCustomers extends Component {
                             <form className={classes.root} noValidate autoComplete="off">
                               <Input 
                                 classes={{
-                                  input: classes.icon
+                                  input: classes.icon,
+                                  underline: classes.underline
                                 }}
-                                onChange={(event) => {this.setState({ input_area_code: event.target.value})}}
-                                defaultValue={customers.USER_AREACODE} 
+                                onChange={(event) => this.setState({ input_phone: event.target.value })}
+                                defaultValue={customer.USER_PHONE}
+                                disabled={this.state.disabled} 
+                              />
+                            </form>
+                          </TableCell>
+                          <TableCell className={classes.body} align="center">
+                            <form className={classes.root} noValidate autoComplete="off">
+                              <Input 
+                                classes={{
+                                  input: classes.icon,
+                                  underline: classes.underline
+                                }}
+                                onChange={(event) => this.setState({ input_email: event.target.value })}
+                                defaultValue={customer.USER_EMAIL}
                                 disabled={this.state.disabled}  
                               />
                             </form>
@@ -211,34 +261,11 @@ class MyCustomers extends Component {
                             <form className={classes.root} noValidate autoComplete="off">
                               <Input 
                                 classes={{
-                                  input: classes.icon
+                                  input: classes.icon,
+                                  underline: classes.underline
                                 }}
-                                onChange={(event) => {this.setState({ input_phone: event.target.value})}}
-                                defaultValue={customers.USER_PHONE}
-                                disabled={this.state.disabled}  
-                              />
-                            </form>
-                          </TableCell>
-                          <TableCell className={classes.body} align="center">
-                            <form className={classes.root} noValidate autoComplete="off">
-                              <Input 
-                                classes={{
-                                  input: classes.icon
-                                }}
-                                onChange={(event) => {this.setState({ input_email: event.target.value})}}
-                                defaultValue={customers.USER_EMAIL}
-                                disabled={this.state.disabled}  
-                              />
-                            </form>
-                          </TableCell>
-                          <TableCell className={classes.body} align="center">
-                            <form className={classes.root} noValidate autoComplete="off">
-                              <Input 
-                                classes={{
-                                  input: classes.icon
-                                }}
-                                onChange={(event) => {this.setState({ input_password: event.target.value})}}
-                                defaultValue={customers.USER_PASS} 
+                                onChange={(event) => this.setState({ input_password: event.target.value })}
+                                defaultValue={customer.USER_PASS} 
                                 disabled={this.state.disabled} 
                               />
                             </form>
@@ -246,13 +273,13 @@ class MyCustomers extends Component {
                           <TableCell className={classes.body} align="center">
                             {this.state.disabled ? (
                               <div className={classes.btns}>
-                            <IconButton onClick={() => this.setState({ disabled: false })}>
+                            <IconButton onClick={() => this.onEdit(i)}>
                               <EditIcon className={classes.icon} />
                             </IconButton>
                             </div>
                             ) : (
                               <div className={classes.btns}>
-                                <IconButton onClick={() => this.onCustomerChange(i)}>
+                                <IconButton onClick={() => this.onCustomerChange()}>
                                   <CheckIcon className={classes.icon} />
                                 </IconButton>
                                 <IconButton onClick={() => this.setState({ disabled: true })}>

@@ -58,7 +58,7 @@ class App extends Component {
     acc_type: 0,
     starting_balance: 0,
     transaction_id: 0,
-    approved: false,
+    approved: 0,
     transaction_history: [],
     weekly_spending: [],
     balances: [],
@@ -66,6 +66,17 @@ class App extends Component {
     customers: [],
     accounts: [],
     account_num: 0,
+    input_first_name: '',
+    input_last_name: '',
+    input_area_code: '',
+    input_phone: '',
+    input_email: '',
+    input_password: '',
+    transaction_error: false,
+    acc_err: false,
+    snackbar: false,
+    debit_card_usage: 0,
+    amt_err: false
   }
 
   setAdmin = () => {
@@ -76,38 +87,59 @@ class App extends Component {
     this.setState({ is_user: true, is_admin: false })
   }
 
+  handleSnackbarClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return
+    }
+
+    this.setState({ 
+      snackbar: false
+    })
+  }
+
   onTransfer = () => {
-    console.log(this.state.acc_from, this.state.acc_to, this.state.amount)
-    transfer(
+    if (!this.state.amt_err) {
+      transfer(
       this.state.acc_from,
       this.state.acc_to,
       this.state.amount
-    )
+    ).then(data => {
+      this.setState({ 
+        transaction_error: !data,
+        snackbar: true
+      })
+    })
+    }
   }
 
   onWithdraw = () => {
+    if (!this.state.amt_err) {
     withdraw(
       this.state.acc_from,
       this.state.amount
-    )
+    ).then(data => {
+      this.setState({ 
+        transaction_error: !data,
+        snackbar: true
+      })
+    })
+    }
+    
   }
 
   onDeposit = () => {
+    if (!this.state.amt_err) {
     deposit(
       this.state.acc_to,
       this.state.amount
-    )
-  }
-
-  onAccountDelete = () => {
-    delete_account(this.state.transaction_history.account_number)
-  }
-
-  createBankAccount = () => {
-    create_bank_account(
-      this.state.acc_type,
-      this.state.starting_balance
-    )
+    ).then(data => {
+      this.setState({ 
+        transaction_error: !data,
+        snackbar: true
+      })
+    })
+    }
+    
   }
 
   onLogin = () => {
@@ -127,7 +159,7 @@ class App extends Component {
           get_admin_details().then((admin_data) => {
             this.setState({ 
               pending_transactions: admin_data.PENDING_TRANSACTIONS,
-              customers: admin_data.CUSTOMERS 
+              customers: admin_data.CUSTOMERS,
             })
           })
         } else {
@@ -135,7 +167,8 @@ class App extends Component {
             this.setState({ 
               accounts: user_data.ACCOUNTS,
               weekly_spending: user_data.WEEKLY_TRANSACTIONS,
-              balances: user_data.BALANCES
+              balances: user_data.BALANCES,
+              debit_card_usage: user_data.DEBIT_CARD_USAGE.DEBIT
             })
           })
         }
@@ -166,7 +199,7 @@ class App extends Component {
       this.state.phone
     ).then((data) => {
 
-      if (data === null) {
+      if (!data) {
         this.setState({
           logged_in: false,
           register_err: true,
@@ -177,13 +210,10 @@ class App extends Component {
       }
 
       this.setState({
-        logged_in: true,
         register_err: false,
         is_user: true,
         is_admin: false
       })
-
-      localStorage.setItem('user_id', data)
     })
   }
 
@@ -220,21 +250,18 @@ class App extends Component {
   }
 
   handleAmt = event => {
-    this.setState({ amount: event.target.value })
-  }
-
-  handleAccType = event => {
-    this.setState({ acc_type: event.target.value })
-  }
-
-  handleStartingBalance = event => {
-    this.setState({ starting_balance: event.target.value })
+    if (event.target.value.charAt(0) === '-') {
+      this.setState({ amt_err: true })
+    } else {
+      this.setState({ 
+        amount: event.target.value,
+        amt_err: false
+      })
+    }
   }
 
   onApprove = (i) => {
-    this.setState({ approved: true })
-
-    console.log(this.state.pending_transactions[i].TRANS_ID)
+    this.setState({ approved: 1 })
 
     review_transaction(
       this.state.pending_transactions[i].TRANS_ID, 
@@ -255,10 +282,7 @@ class App extends Component {
   }
 
   onDeny = (i) => {
-    this.setState({ approved: false })
-
-        console.log(this.state.pending_transactions[i].TRANS_ID)
-
+    this.setState({ approved: 0 })
 
     review_transaction(
       this.state.pending_transactions[i].TRANS_ID, 
@@ -276,10 +300,6 @@ class App extends Component {
       email, 
       password,
       login_err,
-      first_name,
-      last_name,
-      area_code,
-      phone,
       acc_from,
       acc_to,
       amount,
@@ -289,7 +309,12 @@ class App extends Component {
       weekly_spending,
       balances,
       accounts,
-      account_num
+      account_num,
+      register_err,
+      transaction_error,
+      snackbar,
+      debit_card_usage,
+      amt_err
     } = this.state
 
     return (
@@ -360,6 +385,7 @@ class App extends Component {
                 handleEmail={this.handleEmail}
                 handlePass={this.handlePass}
                 onRegister={this.onRegister}
+                register_err={register_err}
               />
             )}
           />
@@ -381,6 +407,7 @@ class App extends Component {
                 weekly_spending={weekly_spending}
                 logged_in={logged_in}
                 balances={balances}
+                debit_card_usage={debit_card_usage}
               />
             )}
           />
@@ -419,6 +446,10 @@ class App extends Component {
                 handleAccTo={this.handleAccTo}
                 handleAmt={this.handleAmt}
                 accounts={accounts}
+                transaction_error={transaction_error}
+                snackbar={snackbar}
+                handleSnackbarClose={this.handleSnackbarClose}
+                amt_err={amt_err}
               />
             )}
           />
@@ -448,9 +479,6 @@ class App extends Component {
             exact path='/user/create-bank-account' 
             render={() => (
               <CreateBankAccount 
-                handleAccType={this.handleAccType}
-                handleStartingBalance={this.handleStartingBalance}
-                createBankAccount={this.createBankAccount}
                 logged_in={logged_in}
               />
             )}

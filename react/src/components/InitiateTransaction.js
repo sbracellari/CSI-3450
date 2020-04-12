@@ -13,7 +13,6 @@ import { Redirect } from 'react-router-dom'
 import Snackbar from '@material-ui/core/Snackbar'
 import ClearIcon from '@material-ui/icons/Clear'
 import IconButton from '@material-ui/core/IconButton'
-import Input from '@material-ui/core/Input'
 
 const styles = () => ({
   background: {
@@ -151,13 +150,19 @@ class InitiateTransaction extends Component {
       handleAccTo,
       handleAmt,
       logged_in,
-      accounts
+      accounts,
+      transaction_error,
+      snackbar,
+      handleSnackbarClose,
+      amt_err
     } = this.props
     const { value } = this.state
 
     if (!logged_in) {
       return <Redirect to='/' />
     }
+
+
 
     return (
       <div className={classes.background}>
@@ -167,7 +172,7 @@ class InitiateTransaction extends Component {
                 <IconButton
                   aria-label='close'
                   color='inherit'
-                  onClick={this.handleSnackbarClose}
+                  onClick={handleSnackbarClose}
                   size='small'
                 >
                   <ClearIcon fontSize='small' />
@@ -179,12 +184,12 @@ class InitiateTransaction extends Component {
               vertical: 'bottom'
             }}
             autoHideDuration={6000}
-            onClose={this.handleSnackbarClose}
-            open={this.state.snackbar}
+            onClose={handleSnackbarClose}
+            open={snackbar}
             message={
-              this.state.modify_err 
-                ? 'Could not modify customer information at this time.' 
-                : 'Customer information was successfully modified.'
+              transaction_error 
+                ? 'Could not complete transaction at this time.' 
+                : 'Transaction successful.'
             }
           />
         <Tabs
@@ -255,16 +260,15 @@ class InitiateTransaction extends Component {
                 </NativeSelect>
               </FormControl>
                <FormControl
-                className={classes.form2}>
+                className={classes.form2}
+              >
                 <BootstrapInput
                   classes={{root: classes.input}} 
                   onChange={handleAmt}
-                  defaultValue="Amount..."
-                  style={classes.amt}
+                  placeholder="Amount..."
+                  className={classes.amt}
+                  error={amt_err}
                 />
-                  {/* Amount */}
-                {/* </Input> */}
-                {/* <BootstrapInput /> */}
               </FormControl>
               <FormControl className={classes.form2}>
                 <InputLabel classes={{root: classes.input}} >What's it for?</InputLabel>
@@ -300,13 +304,13 @@ class InitiateTransaction extends Component {
                 </NativeSelect>
               </FormControl>
                <FormControl className={classes.form2}>
-                <InputLabel 
+                <BootstrapInput
                   classes={{root: classes.input}} 
                   onChange={handleAmt}
-                >
-                  Amount
-                </InputLabel>
-                <BootstrapInput />
+                  placeholder="Amount..."
+                  className={classes.amt}
+                  error={amt_err}
+                />
               </FormControl>
               <FormControl className={classes.form2}>
                 <InputLabel classes={{root: classes.input}} >What's it for?</InputLabel>
@@ -341,13 +345,13 @@ class InitiateTransaction extends Component {
                 </NativeSelect>
               </FormControl>
                <FormControl className={classes.form2}>
-                <InputLabel 
+                <BootstrapInput
                   classes={{root: classes.input}} 
                   onChange={handleAmt}
-                >
-                  Amount
-                </InputLabel>
-                <BootstrapInput />
+                  placeholder="Amount..."
+                  className={classes.amt}
+                  error={amt_err}
+                />
               </FormControl>
               <FormControl className={classes.form2}>
                 <InputLabel classes={{root: classes.input}} >What's it for?</InputLabel>

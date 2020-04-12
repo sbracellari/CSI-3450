@@ -30,7 +30,6 @@ const styles = () => ({
     margin: '5px 20px 20px 20px',
     backgroundColor: '#000000',
     borderRadius: 'none',
-    height: '40vh',
     minHeight: '56vh',
     padding: 10
   },

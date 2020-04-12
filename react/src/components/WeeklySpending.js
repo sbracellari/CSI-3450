@@ -71,6 +71,16 @@ const styles = () => ({
     fontFamily: 'Lemonada',
     fontSize: 16,
     textAlign: 'center'
+  },
+  red: {
+    color: '#d02b2b',
+    padding: 22,
+    fontSize: 18
+  },
+  green: {
+    color: '#72c541',
+    padding: 22,
+    fontSize: 18
   }
 })
 
@@ -102,7 +112,17 @@ class WeeklySpending extends Component {
                   <TableBody>
                     {weekly_spending.map((spending, i) =>
                       <TableRow key={i}>
-                        <TableCell className={classes.body} align="center">{spending.UPDATE_AMOUNT}</TableCell>
+                        {
+                          spending.UPDATE_AMOUNT < 0 ? (
+                            <TableCell className={classes.red} align="center">
+                              {spending.UPDATE_AMOUNT}
+                            </TableCell>
+                          ) : (
+                            <TableCell className={classes.green} align="center">
+                              +{spending.UPDATE_AMOUNT}
+                            </TableCell>
+                          )
+                        }
                         <TableCell className={classes.body} align="center">{spending.UPDATE_DATE}</TableCell>
                       </TableRow>
                     )}

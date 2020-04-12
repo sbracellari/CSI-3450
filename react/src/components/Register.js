@@ -80,6 +80,10 @@ const styles = () => ({
       fontSize: 16,
       fontFamily: 'Lemonada',
       marginTop: 15
+  },
+  err: {
+    color: 'white',
+    fontSize: 14
   }
   
 })
@@ -95,13 +99,15 @@ class Register extends Component {
       handlePhone,
       handleEmail,
       handlePass,
-      onRegister
+      onRegister,
+      register_err
     } = this.props
         return (
             <div className={classes.background}>
                 <div className={classes.container}>
                   <div className={classes.img} />
                   <Typography className={classes.txt}>Take hold of your finances</Typography>
+                  {register_err  && <Typography className={classes.err}>Registration error.</Typography>}
                   <form className={classes.text} noValidate autoComplete="off">
                     <div className={classes.top}>
                       <div className={classes.icon}><PersonIcon /></div> 
@@ -168,6 +174,8 @@ class Register extends Component {
                   <Button 
                     className={classes.btn}
                     onClick={onRegister}
+                    component={Link}
+                    to="/login"
                   >
                     Register
                   </Button>

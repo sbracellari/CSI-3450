@@ -2,7 +2,6 @@ import mysql.connector, json, requests, re
 from mysql.connector import errorcode
 from flask import Flask, jsonify, request
 from requests import get
-import Constants
 import scraper as s
 from flask_cors import CORS
 
@@ -10,6 +9,7 @@ from flask_cors import CORS
 bankdb = mysql.connector.connect(user='admin', password='SYBBankisawesome1234', host='sybbank.c2ao7w5qbjh5.us-east-2.rds.amazonaws.com', database='sybbank')
 
 cur = bankdb.cursor(dictionary=True)
+bankdb.autocommit = True
 
 # Flask initialization
 app = Flask(__name__)
@@ -63,7 +63,7 @@ def register():
 def withdraw():
     user_id = s.read_local_storage()
     acc_from = request.json.get('acc_from')
-    amt = request.json.get('amt')
+    amt = request.json.get('amount')
 
     return cur.callproc('withdraw', [acc_from, amt, user_id])
 
@@ -77,8 +77,8 @@ def withdraw():
 @app.route('/syb-bank/deposit', methods=['POST'])
 def deposit():
     user_id = s.read_local_storage()
-    acc_to = request.json.get('acc_from')
-    amt = request.json.get('amt')
+    acc_to = request.json.get('acc_to')
+    amt = request.json.get('amount')
 
     return cur.callproc('deposit', [acc_to, amt, user_id])
 
@@ -107,13 +107,13 @@ def transfer():
 # generated on bank account creation
 # OUTPUT: ACCOUNT table will be updated, i.e. a new
 # row will be inserted
-@app.route('/syb-bank/create-bank-acount', methods=['POST'])
+@app.route('/syb-bank/create-bank-account', methods=['POST'])
 def create_bank_account(): 
     user_id = s.read_local_storage()
     acc_type = request.json.get('acc_type')
     starting_balance = request.json.get('starting_balance')
 
-    return cur.callproc('createBankAccont', [acc_type, starting_balance, user_id])
+    return cur.callproc('createBankAccount', [acc_type, starting_balance, user_id])
 
 # MAIN ACTOR: ADMINISTRATOR
 # PREDICTED QUERIES TO BE USED: MySQL UPDATE
@@ -155,11 +155,12 @@ def modify_customer():
 def review_transaction():
     try: 
         user_id = s.read_local_storage()
-        trans_id = request.json.get('trans_id')
+        trans_id = request.json.get('transaction_id')
         approved = request.json.get('approved')
         pending_transactions = []
 
         cur.callproc('reviewTransaction', [trans_id, approved])
+        cur.callproc('viewTransactionsAdmin', [user_id])
         for set in cur.stored_results():
             for row in set:
                 pending_transactions.append(dict(zip(set.column_names,row)))
@@ -236,9 +237,7 @@ def get_transaction_history():
 # OUTPUT: displays  admin's customers and pending transactions
 @app.route('/syb-bank/admin-details', methods=['GET'])
 def get_admin_details():
-    # user_id = s.read_local_storage()
-
-    user_id = 1
+    user_id = s.read_local_storage()
 
     customers, pending_transactions = [], []
 

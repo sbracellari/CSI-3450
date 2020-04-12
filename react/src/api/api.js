@@ -36,7 +36,7 @@ export const register = async (first_name, last_name, email, password, area_code
       }),
     })
 
-    const data = await response.json()
+    const data = response.ok
     return data
   } catch (err) {
     return err
@@ -110,7 +110,6 @@ export const transfer = async (acc_from, acc_to, amount) => {
     })
 
     const data = response.ok
-    console.log(data)
     return data
   } catch (err) {
     return err
@@ -126,7 +125,7 @@ export const withdraw = async (acc_from, amount) => {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        acc_to: acc_from,
+        acc_from: acc_from,
         amount: amount
       })
     })
@@ -180,7 +179,7 @@ export const create_bank_account = async (acc_type, starting_balance) => {
   }
 }
 
-export const modify_customer = async (user_id, first_name, last_name, email, password, area_code, phone) => {
+export const modify_customer = async (user_id, first_name, last_name, area_code, phone, email, password) => {
   try {
     const response = await fetch('http://localhost:5000/syb-bank/modify-customer', {
       method: 'POST',
@@ -221,7 +220,8 @@ export const review_transaction = async (transaction_id, approved) => {
       })
     })
 
-    const data = response.ok
+    const data = await response.json()
+    console.log(data)
     return data
   } catch (err) {
     return err
@@ -242,6 +242,7 @@ export const delete_account = async (account_num) => {
     })
 
     const data = response.ok
+    console.log(data)
     return data
   } catch (err) {
     return err

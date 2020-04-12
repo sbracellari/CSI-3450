@@ -17,6 +17,10 @@ import TableContainer from '@material-ui/core/TableContainer'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
 import { Redirect } from 'react-router-dom'
+import Snackbar from '@material-ui/core/Snackbar'
+import ClearIcon from '@material-ui/icons/Clear'
+import IconButton from '@material-ui/core/IconButton'
+import { delete_account } from '../api/api'
 
 const styles = () => ({
   background: {
@@ -95,6 +99,16 @@ const styles = () => ({
     fontFamily: 'Lemonada',
     fontSize: 16,
     textAlign: 'center'
+  },
+  red: {
+    color: '#d02b2b',
+    padding: 22,
+    fontSize: 18
+  },
+  green: {
+    color: '#72c541',
+    padding: 22,
+    fontSize: 18
   }
 })
 
@@ -122,13 +136,37 @@ const BootstrapInput = withStyles((theme) => ({
 
 class TransactionHistory extends Component {
   state={
-    dialogOpen: false
+    dialogOpen: false,
+    snackbar: false,
+    delete_err: false
   }
+
+  handleSnackbarClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return
+    }
+
+    this.setState({ 
+      snackbar: false
+    })
+  }
+
   handleDialogClose = () => {
     this.setState({ dialogOpen: false })
   }
+
+  onAccountDelete = () => {
+    delete_account(this.props.transaction_history.account_number).then(data => {
+      this.setState({ 
+        delete_err: !data,
+        snackbar: true,
+        dialogOpen: false
+       })
+    })
+  }
+
   render () {
-    const { classes, logged_in, transaction_history, onAccountDelete, accounts, handleAccChange } = this.props
+    const { classes, logged_in, transaction_history, accounts, handleAccChange} = this.props
     const { dialogOpen } = this.state
 
     if (!logged_in) {
@@ -137,6 +175,33 @@ class TransactionHistory extends Component {
 
     return (
       <div className={classes.background}>
+
+        <Snackbar
+            action={
+              <React.Fragment>
+                <IconButton
+                  aria-label='close'
+                  color='inherit'
+                  onClick={this.handleSnackbarClose}
+                  size='small'
+                >
+                  <ClearIcon fontSize='small' />
+                </IconButton>
+              </React.Fragment>
+            }
+            anchorOrigin={{
+              horizontal: 'center',
+              vertical: 'bottom'
+            }}
+            autoHideDuration={6000}
+            onClose={this.handleSnackbarClose}
+            open={this.state.snackbar}
+            message={
+              this.state.delete_err 
+                ? 'Account could not be deleted.' 
+                : 'Account deleted successfully.'
+            }
+          />
         <div className={classes.box}>
         <div className={classes.container}>
           <div className={classes.main}>
@@ -175,7 +240,17 @@ class TransactionHistory extends Component {
                   <TableBody>
                     {transaction_history.map((history, i) => 
                       <TableRow key={i}>
-                        <TableCell className={classes.body} align="center">{history.UPDATE_AMOUNT}</TableCell>
+                        {
+                          history.UPDATE_AMOUNT < 0 ? (
+                            <TableCell className={classes.red} align="center">
+                              {history.UPDATE_AMOUNT}
+                            </TableCell>
+                          ) : (
+                            <TableCell className={classes.green} align="center">
+                              +{history.UPDATE_AMOUNT}
+                            </TableCell>
+                          )
+                        }
                         <TableCell className={classes.body} align="center">{history.UPDATE_DATE}</TableCell>
                         <TableCell className={classes.body} align="center">{history.APPROVED}</TableCell>
                       </TableRow>
@@ -210,7 +285,7 @@ class TransactionHistory extends Component {
               Cancel
             </Button>
             <Button
-              onClick={onAccountDelete}
+              onClick={this.onAccountDelete}
             >
               Close Account
             </Button>
