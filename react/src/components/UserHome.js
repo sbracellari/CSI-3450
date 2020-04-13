@@ -204,7 +204,7 @@ class UserHome extends Component {
                           </TableRow>
                         </TableHead>
                         <TableBody>
-                          {balances.map((balances, i) => 
+                          {balances.slice(0, 4).map((balances, i) => 
                             <TableRow key={i}>
                               <TableCell className={classes.body} align="center">
                                 {balances.ACCT_TYPE === null ? 'N/A' : balances.ACCT_TYPE}

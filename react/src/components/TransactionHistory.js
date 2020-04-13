@@ -156,7 +156,7 @@ class TransactionHistory extends Component {
   }
 
   onAccountDelete = () => {
-    delete_account(this.props.transaction_history.account_number).then(data => {
+    delete_account(this.props.account_num).then(data => {
       this.setState({ 
         delete_err: !data,
         snackbar: true,
@@ -166,7 +166,7 @@ class TransactionHistory extends Component {
   }
 
   render () {
-    const { classes, logged_in, transaction_history, accounts, handleAccChange} = this.props
+    const { classes, logged_in, transaction_history, accounts, handleAccChange, account_num} = this.props
     const { dialogOpen } = this.state
 
     if (!logged_in) {

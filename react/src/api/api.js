@@ -242,7 +242,6 @@ export const delete_account = async (account_num) => {
     })
 
     const data = response.ok
-    console.log(data)
     return data
   } catch (err) {
     return err
