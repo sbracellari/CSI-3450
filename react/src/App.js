@@ -1,6 +1,5 @@
 // import necessary packages
 import React, { Component } from 'react'
-import { withStyles } from '@material-ui/core/styles'
 
 import {
   BrowserRouter as Router,
@@ -571,4 +570,4 @@ class App extends Component {
   }
 }
 
-export default withStyles(styles)(App)
+export default App
