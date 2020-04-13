@@ -240,7 +240,9 @@ class TransactionHistory extends Component {
                   <TableBody>
                     {transaction_history.map((history, i) => 
                       <TableRow key={i}>
-                        {
+                        {history.UPDATE_AMOUNT === null ? (
+                          'N/A'
+                        ) : (
                           history.UPDATE_AMOUNT < 0 ? (
                             <TableCell className={classes.red} align="center">
                               {history.UPDATE_AMOUNT}
@@ -250,9 +252,13 @@ class TransactionHistory extends Component {
                               +{history.UPDATE_AMOUNT}
                             </TableCell>
                           )
-                        }
-                        <TableCell className={classes.body} align="center">{history.UPDATE_DATE}</TableCell>
-                        <TableCell className={classes.body} align="center">{history.APPROVED}</TableCell>
+                        )}
+                        <TableCell className={classes.body} align="center">
+                          {history.UPDATE_DATE === null ? 'N/A' : history.UPDATE_DATE}
+                        </TableCell>
+                        <TableCell className={classes.body} align="center">
+                          {history.APPROVED === null ? 'N/A' : history.APPROVED}
+                        </TableCell>
                       </TableRow>
                     )}
                   </TableBody>

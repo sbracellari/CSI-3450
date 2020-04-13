@@ -93,12 +93,24 @@ class PendingTransactions extends Component {
                       <TableBody>
                         {pending_transactions.map((transactions, i) =>
                         <TableRow key={i}>
-                          <TableCell className={classes.body} align="center">{transactions.TRANS_ID}</TableCell>
-                          <TableCell className={classes.body} align="center">{transactions.CUS_ID}</TableCell>
-                          <TableCell className={classes.body} align="center">{transactions.ACCT_FROM}</TableCell>
-                          <TableCell className={classes.body} align="center">{transactions.ACCT_TO}</TableCell>
-                          <TableCell className={classes.body} align="center">{transactions.UPDATE_AMT}</TableCell>
-                          <TableCell className={classes.body} align="center">{transactions.UPDATE_DATE}</TableCell>
+                          <TableCell className={classes.body} align="center">
+                            {transactions.TRANS_ID === null ? 'N/A' : transactions.TRANS_ID}
+                            </TableCell>
+                          <TableCell className={classes.body} align="center">
+                            {transactions.CUS_ID === null ? 'N/A' : transactions.CUS_ID}
+                            </TableCell>
+                          <TableCell className={classes.body} align="center">
+                            {transactions.ACCT_FROM === null ? 'N/A' : transactions.ACCT_FROM}
+                          </TableCell>
+                          <TableCell className={classes.body} align="center">
+                            {transactions.ACCT_TO === null ? 'N/A' : transactions.ACCT_TO}
+                          </TableCell>
+                          <TableCell className={classes.body} align="center">
+                            {transactions.UPDATE_AMT === null ? 'N/A' : transactions.UPDATE_AMOUNT}
+                          </TableCell>
+                          <TableCell className={classes.body} align="center">
+                            {transactions.UPDATE_DATE === null ? 'N/A' : transactions.UPDATE_DATE}
+                          </TableCell>
                           <TableCell className={classes.approve} align="center">
                             <Button 
                               size="small" 

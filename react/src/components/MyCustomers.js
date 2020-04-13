@@ -44,7 +44,7 @@ const styles = () => ({
     fontSize: 20,
     paddingLeft: 20
   },
-    tblTitle: {
+  tblTitle: {
     color: 'white',
     fontFamily: 'Lemonada',
     paddingBottom: 24,
@@ -190,7 +190,7 @@ class MyCustomers extends Component {
                         {customers.map((customer, i) => 
                         <TableRow key={i}>
                           <TableCell className={classes.body} align="center">
-                            {customer.USER_ID}
+                            {customer.USER_ID === null ? 'N/A' : customer.USER_ID}
                           </TableCell>
                           <TableCell className={classes.body} align="center">
                             <form className={classes.root} noValidate autoComplete="off">
@@ -200,7 +200,7 @@ class MyCustomers extends Component {
                                   underline: classes.underline
                                 }}
                                 onChange={(event) => this.setState({ input_first_name: event.target.value })}
-                                defaultValue={customer.USER_FNAME} 
+                                defaultValue={customer.USER_FNAME === null ? 'N/A' : customer.USER_FNAME} 
                                 disabled={this.state.disabled}
                               />
                             </form>
@@ -213,7 +213,7 @@ class MyCustomers extends Component {
                                   underline: classes.underline
                                 }}
                                 onChange={(event) => this.setState({ input_last_name: event.target.value })}
-                                defaultValue={customer.USER_LNAME} 
+                                defaultValue={customer.USER_LNAME === null ? 'N/A' : customer.USER_LNAME} 
                                 disabled={this.state.disabled}  
                               />
                             </form>
@@ -226,7 +226,7 @@ class MyCustomers extends Component {
                                   underline: classes.underline
                                 }}
                                 onChange={(event) => this.setState({ input_area_code: event.target.value })}
-                                defaultValue={customer.USER_AREACODE} 
+                                defaultValue={customer.USER_AREACODE === null ? 'N/A' : customer.USER_AREACODE} 
                                 disabled={this.state.disabled}  
                               />
                             </form>
@@ -239,7 +239,7 @@ class MyCustomers extends Component {
                                   underline: classes.underline
                                 }}
                                 onChange={(event) => this.setState({ input_phone: event.target.value })}
-                                defaultValue={customer.USER_PHONE}
+                                defaultValue={customer.USER_PHONE === null ? 'N/A' : customer.USER_PHONE}
                                 disabled={this.state.disabled} 
                               />
                             </form>
@@ -252,7 +252,7 @@ class MyCustomers extends Component {
                                   underline: classes.underline
                                 }}
                                 onChange={(event) => this.setState({ input_email: event.target.value })}
-                                defaultValue={customer.USER_EMAIL}
+                                defaultValue={customer.USER_EMAIL === null ? 'N/A' : customer.USER_EMAIL}
                                 disabled={this.state.disabled}  
                               />
                             </form>
@@ -265,7 +265,7 @@ class MyCustomers extends Component {
                                   underline: classes.underline
                                 }}
                                 onChange={(event) => this.setState({ input_password: event.target.value })}
-                                defaultValue={customer.USER_PASS} 
+                                defaultValue={customer.USER_PASS === null ? 'N/A' : customer.USER_PASS} 
                                 disabled={this.state.disabled} 
                               />
                             </form>

@@ -206,9 +206,15 @@ class UserHome extends Component {
                         <TableBody>
                           {balances.map((balances, i) => 
                             <TableRow key={i}>
-                              <TableCell className={classes.body} align="center">{balances.ACCT_TYPE}</TableCell>
-                              <TableCell className={classes.body} align="center">{balances.ACCT_NUMBER}</TableCell>
-                              <TableCell className={classes.body} align="center">${balances.ACCT_BALANCE}</TableCell>
+                              <TableCell className={classes.body} align="center">
+                                {balances.ACCT_TYPE === null ? 'N/A' : balances.ACCT_TYPE}
+                              </TableCell>
+                              <TableCell className={classes.body} align="center">
+                                {balances.ACCT_NUMBER === null ? 'N/A' : balances.ACCT_NUMBER}
+                              </TableCell>
+                              <TableCell className={classes.body} align="center">
+                                {balances.ACCT_BALANCE === null ? 'N/A' : `$${balances.ACCT_BALANCE}`}
+                              </TableCell>
                             </TableRow>
                           )}
                         </TableBody>

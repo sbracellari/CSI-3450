@@ -112,7 +112,9 @@ class WeeklySpending extends Component {
                   <TableBody>
                     {weekly_spending.map((spending, i) =>
                       <TableRow key={i}>
-                        {
+                        {spending.UPDATE_AMOUNT === null ? (
+                          'N/A'
+                        ) : (
                           spending.UPDATE_AMOUNT < 0 ? (
                             <TableCell className={classes.red} align="center">
                               {spending.UPDATE_AMOUNT}
@@ -122,8 +124,10 @@ class WeeklySpending extends Component {
                               +{spending.UPDATE_AMOUNT}
                             </TableCell>
                           )
-                        }
-                        <TableCell className={classes.body} align="center">{spending.UPDATE_DATE}</TableCell>
+                        )}
+                        <TableCell className={classes.body} align="center">
+                          {spending.UPDATE_DATE === null ? 'N/A' : spending.UPDATE_DATE}
+                        </TableCell>
                       </TableRow>
                     )}
                   </TableBody>
