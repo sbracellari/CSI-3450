@@ -1,3 +1,4 @@
+// import necessary packages
 import React, { Component } from 'react'
 import { withStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
@@ -12,6 +13,7 @@ import ClearIcon from '@material-ui/icons/Clear'
 import IconButton from '@material-ui/core/IconButton'
 import { create_bank_account } from '../api/api'
 
+// apply styles
 const styles = () => ({
   background: {
     backgroundColor: '#232428',
@@ -108,6 +110,9 @@ class CreateBankAccount extends Component {
     })
   }
 
+  // on bank account creation, will check if the starting balance is negative. if its not,
+  // it will call the create_bank_account method in api.js with the account type and starting
+  // balance. if the starting balance is negative, the user will not be able to create the account
   createBankAccount = () => {
     if (!this.state.amt_err) {
       create_bank_account(
@@ -123,41 +128,45 @@ class CreateBankAccount extends Component {
   }
 
   render () {
-    const { classes, logged_in } = this.props
+    const { 
+      classes, 
+      logged_in // get props passed from App.js
+    } = this.props
 
+    // check if the user is still logged in. if not, redirect them to
+    // the welcome page
     if (!logged_in) {
       return <Redirect to='/' />
     }
 
     return (
       <div className={classes.background}>
-
         <Snackbar
-            action={
-              <React.Fragment>
-                <IconButton
-                  aria-label='close'
-                  color='inherit'
-                  onClick={this.handleSnackbarClose}
-                  size='small'
-                >
-                  <ClearIcon fontSize='small' />
-                </IconButton>
-              </React.Fragment>
-            }
-            anchorOrigin={{
-              horizontal: 'center',
-              vertical: 'bottom'
-            }}
-            autoHideDuration={6000}
-            onClose={this.handleSnackbarClose}
-            open={this.state.snackbar}
-            message={
-              this.state.acc_err
-                ? 'Account could not be created at this time.' 
-                : 'Account creation successful.'
-            }
-          />
+          action={
+            <React.Fragment>
+              <IconButton
+                aria-label='close'
+                color='inherit'
+                onClick={this.handleSnackbarClose}
+                size='small'
+              >
+                <ClearIcon fontSize='small' />
+              </IconButton>
+            </React.Fragment>
+          }
+          anchorOrigin={{
+            horizontal: 'center',
+            vertical: 'bottom'
+          }}
+          autoHideDuration={6000}
+          onClose={this.handleSnackbarClose}
+          open={this.state.snackbar}
+          message={
+            this.state.acc_err
+              ? 'Account could not be created at this time.' 
+              : 'Account creation successful.'
+          }
+        />
         <div className={classes.container}>
           <Typography className={classes.txt}>Create an Account</Typography>
           <div className={classes.paper}>
@@ -168,7 +177,7 @@ class CreateBankAccount extends Component {
                   classes={{
                     icon: classes.icon
                   }}
-                  onChange={(event) => this.setState({ acc_type: event.target.value })}
+                  onChange={(event) => this.setState({ acc_type: event.target.value })} // change acc_type value based on dropdown selection
                   input={<BootstrapInput />}
                 >
                   <option aria-label="None" value="" />
@@ -180,6 +189,7 @@ class CreateBankAccount extends Component {
                 <BootstrapInput
                   classes={{root: classes.input}}
                   onChange={(event) => {
+                    // check if value is negative and handle accordingly
                     if (event.target.value.charAt(0) === '-') {
                       this.setState({ amt_err: true })
                     } else {
@@ -200,7 +210,7 @@ class CreateBankAccount extends Component {
             </form>
             <Button 
               className={classes.btn}
-              onClick={this.createBankAccount}
+              onClick={this.createBankAccount} // defined above
             >
               Create Account
             </Button>

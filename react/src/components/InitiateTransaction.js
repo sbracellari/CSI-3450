@@ -1,3 +1,4 @@
+// import necessary packages
 import React, { Component } from 'react'
 import { withStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
@@ -14,6 +15,7 @@ import Snackbar from '@material-ui/core/Snackbar'
 import ClearIcon from '@material-ui/icons/Clear'
 import IconButton from '@material-ui/core/IconButton'
 
+// apply styles
 const styles = () => ({
   background: {
     backgroundColor: '#232428',
@@ -143,7 +145,7 @@ class InitiateTransaction extends Component {
   render() {
     const { 
       classes, 
-      onTransfer, 
+      onTransfer, // get props passed from App.js
       onDeposit, 
       onWithdraw,
       handleAccFrom,
@@ -158,40 +160,39 @@ class InitiateTransaction extends Component {
     } = this.props
     const { value } = this.state
 
+    // check if the user is logged in. if not, redirect them to the welcome page
     if (!logged_in) {
       return <Redirect to='/' />
     }
 
-
-
     return (
       <div className={classes.background}>
         <Snackbar
-            action={
-              <React.Fragment>
-                <IconButton
-                  aria-label='close'
-                  color='inherit'
-                  onClick={handleSnackbarClose}
-                  size='small'
-                >
-                  <ClearIcon fontSize='small' />
-                </IconButton>
-              </React.Fragment>
-            }
-            anchorOrigin={{
-              horizontal: 'center',
-              vertical: 'bottom'
-            }}
-            autoHideDuration={6000}
-            onClose={handleSnackbarClose}
-            open={snackbar}
-            message={
-              transaction_error 
-                ? 'Could not complete transaction at this time.' 
-                : 'Transaction successful.'
-            }
-          />
+          action={
+            <React.Fragment>
+              <IconButton
+                aria-label='close'
+                color='inherit'
+                onClick={handleSnackbarClose}
+                size='small'
+              >
+                <ClearIcon fontSize='small' />
+              </IconButton>
+            </React.Fragment>
+          }
+          anchorOrigin={{
+            horizontal: 'center',
+            vertical: 'bottom'
+          }}
+          autoHideDuration={6000}
+          onClose={handleSnackbarClose}
+          open={snackbar}
+          message={
+            transaction_error 
+              ? 'Could not complete transaction at this time.' 
+              : 'Transaction successful.'
+          }
+         />
         <Tabs
           className={classes.tabs}
           centered="true"
@@ -235,11 +236,11 @@ class InitiateTransaction extends Component {
                   classes={{
                     icon: classes.icon
                   }}
-                  onChange={handleAccFrom}
+                  onChange={handleAccFrom} // defined in App.js
                   input={<BootstrapInput />}
                 >
                   <option>None</option>
-                {accounts.map((accounts, i) =>
+                {accounts.map((accounts, i) => // display all of the user's accounts in the dropdown
                   <option key={i}>{accounts.ACCT_NUMBER}</option>
                 )}
                 </NativeSelect>
@@ -250,11 +251,11 @@ class InitiateTransaction extends Component {
                   classes={{
                     icon: classes.icon
                   }}
-                  onChange={handleAccTo}
+                  onChange={handleAccTo} // defined in App.js
                   input={<BootstrapInput />}
                 >
                   <option>None</option>
-                {accounts.map((accounts, i) =>
+                {accounts.map((accounts, i) => // display all of the user's accounts in the dropdown
                   <option key={i}>{accounts.ACCT_NUMBER}</option>
                 )}
                 </NativeSelect>
@@ -264,9 +265,9 @@ class InitiateTransaction extends Component {
               >
                 <BootstrapInput
                   classes={{root: classes.input}} 
-                  onChange={handleAmt}
+                  onChange={handleAmt} // defined in App.js
                   placeholder="Amount..."
-                  className={classes.amt}
+                  className={classes.amt} 
                   error={amt_err}
                 />
               </FormControl>
@@ -278,7 +279,7 @@ class InitiateTransaction extends Component {
             </div>
             <Button 
               className={classes.btn2}
-              onClick={onTransfer}
+              onClick={onTransfer} // defined in App.js
             >
               Transfer
             </Button>
@@ -294,11 +295,11 @@ class InitiateTransaction extends Component {
                   classes={{
                     icon: classes.icon
                   }}
-                  onChange={handleAccTo}
+                  onChange={handleAccTo} // defined in App.js
                   input={<BootstrapInput />}
                 >
                   <option>None</option>
-                {accounts.map((accounts, i) =>
+                {accounts.map((accounts, i) => // display all of the user's accounts in the dropdown
                   <option key={i}>{accounts.ACCT_NUMBER}</option>
                 )}
                 </NativeSelect>
@@ -306,7 +307,7 @@ class InitiateTransaction extends Component {
                <FormControl className={classes.form2}>
                 <BootstrapInput
                   classes={{root: classes.input}} 
-                  onChange={handleAmt}
+                  onChange={handleAmt} // defined in App.js
                   placeholder="Amount..."
                   className={classes.amt}
                   error={amt_err}
@@ -320,7 +321,7 @@ class InitiateTransaction extends Component {
             </div>
             <Button 
               className={classes.btn3}
-              onClick={onDeposit}
+              onClick={onDeposit} //defined in App.js
             >
               Deposit
             </Button>
@@ -335,11 +336,11 @@ class InitiateTransaction extends Component {
                   classes={{
                     icon: classes.icon
                   }}
-                  onChange={handleAccFrom}
+                  onChange={handleAccFrom} // defined in App.js
                   input={<BootstrapInput />}
                 >
                   <option>None</option>
-                {accounts.map((accounts, i) =>
+                {accounts.map((accounts, i) => // display all of the user's accounts in the dropdown
                   <option key={i}>{accounts.ACCT_NUMBER}</option>
                 )}
                 </NativeSelect>
@@ -347,9 +348,9 @@ class InitiateTransaction extends Component {
                <FormControl className={classes.form2}>
                 <BootstrapInput
                   classes={{root: classes.input}} 
-                  onChange={handleAmt}
+                  onChange={handleAmt} // defined in App.js
                   placeholder="Amount..."
-                  className={classes.amt}
+                  className={classes.amt} 
                   error={amt_err}
                 />
               </FormControl>
@@ -361,7 +362,7 @@ class InitiateTransaction extends Component {
             </div>
             <Button 
               className={classes.btn3}
-              onClick={onWithdraw}
+              onClick={onWithdraw} // defined in App.js
             >
               Withdraw
             </Button>
