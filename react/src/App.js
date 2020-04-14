@@ -55,7 +55,7 @@ class App extends Component {
     acc_type: 0,
     starting_balance: 0,
     transaction_id: 0,
-    approved: 0,
+    approved: -1,
     transaction_history: [],
     weekly_spending: [],
     balances: [],
@@ -473,8 +473,7 @@ class App extends Component {
   onAccountDelete = () => {
     delete_account(this.state.account_num).then(data => {
 
-      console.log(data)
-
+      // if data === 0, the account is a checking and cannot be deleted
       if (data === 0) {
         this.setState({ 
           delete_err: true,
@@ -485,6 +484,7 @@ class App extends Component {
         return
       }
 
+      // this only runs when the account is a savings or money market
       this.setState({ 
         delete_err: false,
         deleteSnackbar: true,
@@ -502,12 +502,13 @@ class App extends Component {
 
   // when a transaction is approved, set the approved value to 1, and call the review_transaction
   // method in api.js
-  onApprove = (i) => {
-    this.setState({ approved: 1 })
+  onApprove = i => {
+
+    const approved = 1
 
     review_transaction(
       this.state.pending_transactions[i].TRANS_ID, 
-      this.state.approved
+      approved
     ).then(data => {
       // a new list of the pending transactions will be returned
       this.setState({ pending_transactions: data.PENDING_TRANSACTIONS })
@@ -528,12 +529,14 @@ class App extends Component {
 
   // when a transaction is denied, set the approved value to 0, and call the review_transaction 
   // method in api.js
-  onDeny = (i) => {
-    this.setState({ approved: 0 })
+  onDeny = i => {
+    
+    const approved = 0
 
     review_transaction(
       this.state.pending_transactions[i].TRANS_ID, 
-      this.state.approved).then(data => {
+      approved
+    ).then(data => {
       // a new list of the pending transactions will be returned
       this.setState({ pending_transactions: data.PENDING_TRANSACTIONS })
     })

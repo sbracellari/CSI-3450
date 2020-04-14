@@ -380,25 +380,28 @@ def get_admin_details():
 def delete_account():
 
     # read the user's ID from local storage using the scraper in scraper.py
-    # user_id = s.read_local_storage()
-
-    user_id = 3
+    user_id = s.read_local_storage()
 
     # get request attribute from the frontend
     account_number = request.json.get('account_num')
 
     balances, accounts, data = [], [], []
 
+    # call isChecking prodecure to check if the account number belongs to a checking account
     cur.callproc('isChecking1', [account_number])
 
+    # iterate through the result set
     for result in cur.stored_results():
-        data = result.fetchone()
+        data = result.fetchone() # there's only one row, so we can just fetch it right away
 
     data = str(data)[1]
 
+    # if the result is a 1, the account is a checking and cannot be deleted
     if data == '1':
         return '0'
     
+    # else, the account is either a savings or a money market and can be deleted, so fetch
+    # updated data
     else:
         # call deleteBankAccountProcedure
         cur.callproc('deleteBankAccount', [account_number])
@@ -419,11 +422,10 @@ def delete_account():
             for row in set:
                 accounts.append(dict(zip(set.column_names,row))) # append each row to an array
 
-        # jsonify the four arrays so the frontend will accept the return value
+        # jsonify the two arrays so the frontend will accept the return value
         return jsonify({
             'BALANCES': balances, 
             'ACCOUNTS': accounts
         })
 
-    
 app.run() # spins up a server on port 5000
