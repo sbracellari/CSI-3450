@@ -11,7 +11,6 @@ import { Redirect } from 'react-router-dom'
 import Snackbar from '@material-ui/core/Snackbar'
 import ClearIcon from '@material-ui/icons/Clear'
 import IconButton from '@material-ui/core/IconButton'
-import { create_bank_account } from '../api/api'
 
 // apply styles
 const styles = () => ({
@@ -91,46 +90,17 @@ const BootstrapInput = withStyles((theme) => ({
   },
 }))(InputBase)
 
-class CreateBankAccount extends Component {
-  state = {
-    snackbar: false,
-    acc_type: 0,
-    starting_balance: 0,
-    acc_err: false,
-    amt_err: false
-  }
-
-  handleSnackbarClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return
-    }
-
-    this.setState({ 
-      snackbar: false
-    })
-  }
-
-  // on bank account creation, will check if the starting balance is negative. if its not,
-  // it will call the create_bank_account method in api.js with the account type and starting
-  // balance. if the starting balance is negative, the user will not be able to create the account
-  createBankAccount = () => {
-    if (!this.state.amt_err) {
-      create_bank_account(
-      this.state.acc_type,
-      this.state.starting_balance
-    ).then(data => {
-      this.setState({ 
-        acc_err: !data,
-        snackbar: true
-       })
-    })
-    }
-  }
-
+class CreateBankAccount extends Component { 
   render () {
     const { 
       classes, 
-      logged_in // get props passed from App.js
+      logged_in, // get props passed from App.js
+      accSnackbar,
+      handleAccSnackbarClose,
+      createBankAccount,
+      acc_err,
+      handleAccType,
+      handleStartingBalance
     } = this.props
 
     // check if the user is still logged in. if not, redirect them to
@@ -147,7 +117,7 @@ class CreateBankAccount extends Component {
               <IconButton
                 aria-label='close'
                 color='inherit'
-                onClick={this.handleSnackbarClose}
+                onClick={handleAccSnackbarClose}
                 size='small'
               >
                 <ClearIcon fontSize='small' />
@@ -159,10 +129,10 @@ class CreateBankAccount extends Component {
             vertical: 'bottom'
           }}
           autoHideDuration={6000}
-          onClose={this.handleSnackbarClose}
-          open={this.state.snackbar}
+          onClose={handleAccSnackbarClose}
+          open={accSnackbar}
           message={
-            this.state.acc_err
+            acc_err
               ? 'Account could not be created at this time.' 
               : 'Account creation successful.'
           }
@@ -177,7 +147,7 @@ class CreateBankAccount extends Component {
                   classes={{
                     icon: classes.icon
                   }}
-                  onChange={(event) => this.setState({ acc_type: event.target.value })} // change acc_type value based on dropdown selection
+                  onChange={handleAccType} // defined in App.js
                   input={<BootstrapInput />}
                 >
                   <option aria-label="None" value="" />
@@ -188,17 +158,7 @@ class CreateBankAccount extends Component {
                <FormControl className={classes.form}>
                 <BootstrapInput
                   classes={{root: classes.input}}
-                  onChange={(event) => {
-                    // check if value is negative and handle accordingly
-                    if (event.target.value.charAt(0) === '-') {
-                      this.setState({ amt_err: true })
-                    } else {
-                      this.setState({ 
-                        starting_balance: event.target.value,
-                        amt_err: false
-                      })
-                    }
-                  }}
+                  onChange={handleStartingBalance} // defined in App.js
                   className={classes.bootStrap}
                   placeholder="Starting Balance..."
                 />
@@ -210,7 +170,7 @@ class CreateBankAccount extends Component {
             </form>
             <Button 
               className={classes.btn}
-              onClick={this.createBankAccount} // defined above
+              onClick={createBankAccount} // defined in App.js
             >
               Create Account
             </Button>

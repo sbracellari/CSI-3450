@@ -21,8 +21,6 @@ import { Redirect } from 'react-router-dom'
 import Snackbar from '@material-ui/core/Snackbar'
 import ClearIcon from '@material-ui/icons/Clear'
 import IconButton from '@material-ui/core/IconButton'
-import { delete_account } from '../api/api'
-
 
 // apply styles
 const styles = () => ({
@@ -138,47 +136,21 @@ const BootstrapInput = withStyles((theme) => ({
 }))(InputBase)
 
 class TransactionHistory extends Component {
-  state={
-    dialogOpen: false,
-    snackbar: false,
-    delete_err: false
-  }
-
-  handleSnackbarClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return
-    }
-
-    this.setState({ 
-      snackbar: false
-    })
-  }
-
-  handleDialogClose = () => {
-    this.setState({ dialogOpen: false })
-  }
-
-  // on account deletion, the delete_account method will be called in api.js
-  // with the account number
-  onAccountDelete = () => {
-    delete_account(this.props.account_num).then(data => {
-      this.setState({ 
-        delete_err: !data,
-        snackbar: true,
-        dialogOpen: false
-       })
-    })
-  }
-
-  render () {
+   render () {
     const { 
       classes, 
       logged_in, // get props passed in App.js
       transaction_history, 
       accounts, 
-      handleAccChange 
+      handleAccChange,
+      delete_err,
+      deleteSnackbar,
+      handleDeleteSnackbarClose,
+      onAccountDelete,
+      dialogOpen,
+      handleDialogClose,
+      handleDialog
     } = this.props
-    const { dialogOpen } = this.state
 
     // check if user is logged in. if they aren't, redirect to welcome page
     if (!logged_in) {
@@ -193,7 +165,7 @@ class TransactionHistory extends Component {
               <IconButton
                 aria-label='close'
                 color='inherit'
-                onClick={this.handleSnackbarClose}
+                onClick={handleDeleteSnackbarClose}
                 size='small'
               >
                 <ClearIcon fontSize='small' />
@@ -205,10 +177,10 @@ class TransactionHistory extends Component {
             vertical: 'bottom'
           }}
           autoHideDuration={6000}
-          onClose={this.handleSnackbarClose}
-          open={this.state.snackbar}
+          onClose={handleDeleteSnackbarClose}
+          open={deleteSnackbar}
           message={
-            this.state.delete_err 
+            delete_err 
               ? 'Account could not be deleted.' 
               : 'Account deleted successfully.'
           }
@@ -285,13 +257,13 @@ class TransactionHistory extends Component {
       </div>
       <Button
         className={classes.btn}
-        onClick={() => this.setState({ dialogOpen: true })}
+        onClick={handleDialog}
       >
         Close Account
       </Button>
       <Dialog
         open={dialogOpen}
-        onClose={this.handleDialogClose}
+        onClose={handleDialogClose}
       >
         <DialogTitle className={classes.title}>Close this Account?</DialogTitle>
         <DialogContent className={classes.content}>
@@ -300,12 +272,12 @@ class TransactionHistory extends Component {
         <DialogActions>
           <Button 
             autoFocus
-            onClick={this.handleDialogClose}
+            onClick={handleDialogClose}
           >
             Cancel
           </Button>
           <Button
-            onClick={this.onAccountDelete} // defined above
+            onClick={onAccountDelete} // defined in App.js
           >
             Close Account
           </Button>

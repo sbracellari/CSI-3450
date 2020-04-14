@@ -16,8 +16,6 @@ import ClearIcon from '@material-ui/icons/Clear'
 import { Redirect } from 'react-router-dom'
 import Snackbar from '@material-ui/core/Snackbar'
 
-import { modify_customer } from '../api/api'
-
 // apply styles
 const styles = () => ({
   background: {
@@ -75,68 +73,25 @@ const styles = () => ({
 })
 
 class MyCustomers extends Component {
-  state={
-    disabled: true,
-    input_first_name: '',
-    input_last_name: '',
-    input_area_code: '',
-    input_phone: '',
-    input_email: '',
-    input_password: '',
-    user_id: 0,
-    modify_err: false,
-    snackbar: false
-  } 
-
-  handleSnackbarClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return
-    }
-    this.setState({ 
-      snackbar: false
-    })
-  }
-
-  // when the admin clicks the edit button, state variables will be set to 
-  // what is initially shown on the screen
-  onEdit = i => {
-    this.setState({
-      user_id: this.props.customers[i].USER_ID,
-      input_first_name: this.props.customers[i].USER_FNAME,
-      input_last_name: this.props.customers[i].USER_LNAME,
-      input_area_code: this.props.customers[i].USER_AREACODE,
-      input_phone: this.props.customers[i].USER_PHONE,
-      input_email: this.props.customers[i].USER_EMAIL,
-      input_password: this.props.customers[i].USER_PASS,
-      disabled: false
-    })
-  }
-
-  // when an admin saves their changes, this method will be called, which calls the
-  // modify_customer method in api.js with the 7 variables below
-  onCustomerChange = () => {
-      modify_customer(
-        this.state.user_id,
-        this.state.input_first_name,
-        this.state.input_last_name,
-        this.state.input_area_code,
-        this.state.input_phone,
-        this.state.input_email,
-        this.state.input_password
-    ).then(data => {
-      this.setState({ 
-        modify_err: !data, 
-        snackbar: true, 
-        disabled: true 
-      })
-    })
-  }
 
   render () {
     const { 
       classes,  
       logged_in, //get props passed from App.js
-      customers
+      customers,
+      modify_err,
+      handleInputFirstName,
+      handleInputLastName,
+      handleInputAreaCode,
+      handleInputPhone,
+      handleInputEmail,
+      handleInputPass,
+      onEdit,
+      onCustomerChange,
+      disabled,
+      onCancel,
+      customerSnackbar,
+      handleCustomerSnackbarClose
     } = this.props
 
     // check if the user is logged in. if they aren't, redirect to the home page
@@ -152,7 +107,7 @@ class MyCustomers extends Component {
               <IconButton
                 aria-label='close'
                 color='inherit'
-                onClick={this.handleSnackbarClose}
+                onClick={handleCustomerSnackbarClose}
                 size='small'
               >
                 <ClearIcon fontSize='small' />
@@ -164,10 +119,10 @@ class MyCustomers extends Component {
             vertical: 'bottom'
           }}
           autoHideDuration={6000}
-          onClose={this.handleSnackbarClose}
-          open={this.state.snackbar}
+          onClose={handleCustomerSnackbarClose}
+          open={customerSnackbar}
           message={
-            this.state.modify_err 
+            modify_err 
               ? 'Could not modify customer information at this time.' 
               : 'Customer information was successfully modified.'
           }
@@ -206,11 +161,10 @@ class MyCustomers extends Component {
                                   input: classes.icon,
                                   underline: classes.underline
                                 }}
-                                // set name state variable to textfield input
-                                onChange={(event) => this.setState({ input_first_name: event.target.value })}
+                                onChange={handleInputFirstName} // defined in App.js
                                 // null check on customer first name
                                 defaultValue={customer.USER_FNAME === null ? 'N/A' : customer.USER_FNAME} 
-                                disabled={this.state.disabled}
+                                disabled={disabled}
                               />
                             </form>
                           </TableCell>
@@ -221,11 +175,10 @@ class MyCustomers extends Component {
                                   input: classes.icon,
                                   underline: classes.underline
                                 }}
-                                // set last name state variable to textfield input
-                                onChange={(event) => this.setState({ input_last_name: event.target.value })}
+                                onChange={handleInputLastName} // defined in App.js
                                 // null check on customer last name
                                 defaultValue={customer.USER_LNAME === null ? 'N/A' : customer.USER_LNAME} 
-                                disabled={this.state.disabled}  
+                                disabled={disabled}  
                               />
                             </form>
                           </TableCell>
@@ -236,11 +189,10 @@ class MyCustomers extends Component {
                                   input: classes.icon,
                                   underline: classes.underline
                                 }}
-                                // set area code state variable to textfield input
-                                onChange={(event) => this.setState({ input_area_code: event.target.value })}
+                                onChange={handleInputAreaCode} // defined in App.js
                                 // null check on area code
                                 defaultValue={customer.USER_AREACODE === null ? 'N/A' : customer.USER_AREACODE} 
-                                disabled={this.state.disabled}  
+                                disabled={disabled}  
                               />
                             </form>
                           </TableCell>
@@ -251,11 +203,10 @@ class MyCustomers extends Component {
                                   input: classes.icon,
                                   underline: classes.underline
                                 }}
-                                // set phone number state variable to textfield input
-                                onChange={(event) => this.setState({ input_phone: event.target.value })}
+                                onChange={handleInputPhone} // defined in App.js
                                 // null check on phone number
                                 defaultValue={customer.USER_PHONE === null ? 'N/A' : customer.USER_PHONE}
-                                disabled={this.state.disabled} 
+                                disabled={disabled} 
                               />
                             </form>
                           </TableCell>
@@ -266,11 +217,10 @@ class MyCustomers extends Component {
                                   input: classes.icon,
                                   underline: classes.underline
                                 }}
-                                // set email state variable to value of textfield input
-                                onChange={(event) => this.setState({ input_email: event.target.value })}
+                                onChange={handleInputEmail} // defined in App.js
                                 // null check on email
                                 defaultValue={customer.USER_EMAIL === null ? 'N/A' : customer.USER_EMAIL}
-                                disabled={this.state.disabled}  
+                                disabled={disabled}  
                               />
                             </form>
                           </TableCell>
@@ -281,19 +231,18 @@ class MyCustomers extends Component {
                                   input: classes.icon,
                                   underline: classes.underline
                                 }}
-                                // set password state variable to value of textfield input
-                                onChange={(event) => this.setState({ input_password: event.target.value })}
+                                onChange={handleInputPass} // defined in App.js
                                 // null check on password
                                 defaultValue={customer.USER_PASS === null ? 'N/A' : customer.USER_PASS} 
-                                disabled={this.state.disabled} 
+                                disabled={disabled} 
                               />
                             </form>
                           </TableCell>
                           <TableCell className={classes.body} align="center">
-                            {this.state.disabled ? (
+                            {disabled ? (
                               <div className={classes.btns}>
                             <IconButton 
-                              onClick={() => this.onEdit(i)} //defined above
+                              onClick={() => onEdit(i)} //defined in App.js
                             >
                               <EditIcon className={classes.icon} />
                             </IconButton>
@@ -301,11 +250,11 @@ class MyCustomers extends Component {
                             ) : (
                               <div className={classes.btns}>
                                 <IconButton 
-                                  onClick={() => this.onCustomerChange()} // defined above
+                                  onClick={() => onCustomerChange()} // defined in App.js
                                 >
                                   <CheckIcon className={classes.icon} />
                                 </IconButton>
-                                <IconButton onClick={() => this.setState({ disabled: true })}>
+                                <IconButton onClick={onCancel}>
                                   <ClearIcon className={classes.icon} />
                                 </IconButton>
                               </div>

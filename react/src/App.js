@@ -30,7 +30,10 @@ import {
   withdraw,
   deposit,
   review_transaction,
-  get_transaction_history
+  get_transaction_history,
+  modify_customer,
+  create_bank_account,
+  delete_account
 } from './api/api'
 
 // declare state variables 
@@ -60,17 +63,25 @@ class App extends Component {
     customers: [],
     accounts: [],
     account_num: 0,
-    input_first_name: '',
-    input_last_name: '',
-    input_area_code: '',
-    input_phone: '',
-    input_email: '',
-    input_password: '',
     transaction_error: false,
     acc_err: false,
     snackbar: false,
     debit_card_usage: 0,
-    amt_err: false
+    amt_err: false,
+    input_first_name: '',
+    input_last_name: '',
+    input_area_code: 0,
+    input_phone: 0,
+    input_email: '',
+    input_password: '',
+    user_id: 0,
+    modify_err: false,
+    disabled: true,
+    accSnackbar: false,
+    customerSnackbar: false,
+    deleteSnackbar: false,
+    delete_err: false,
+    dialogOpen: false
   }
 
   // set admin state to true and user state to false if the
@@ -93,6 +104,107 @@ class App extends Component {
     this.setState({ 
       snackbar: false
     })
+  }
+
+  handleAccSnackbarClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return
+    }
+
+    this.setState({ 
+      accSnackbar: false
+    })
+  }
+
+  handleCustomerSnackbarClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return
+    }
+
+    this.setState({ 
+      customerSnackbar: false
+    })
+  }
+
+  handleDeleteSnackbarClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return
+    }
+
+    this.setState({ 
+      deleteSnackbar: false
+    })
+  }
+
+   // when the admin clicks the edit button, state variables will be set to 
+  // what is initially shown on the screen
+  onEdit = i => {
+    this.setState({
+      user_id: this.state.customers[i].USER_ID,
+      input_first_name: this.state.customers[i].USER_FNAME,
+      input_last_name: this.state.customers[i].USER_LNAME,
+      input_area_code: this.state.customers[i].USER_AREACODE,
+      input_phone: this.state.customers[i].USER_PHONE,
+      input_email: this.state.customers[i].USER_EMAIL,
+      input_password: this.state.customers[i].USER_PASS,
+      disabled: false
+    })
+  }
+
+  // when an admin saves their changes, this method will be called, which calls the
+  // modify_customer method in api.js with the 7 variables below
+  onCustomerChange = () => {
+      modify_customer(
+        this.state.user_id,
+        this.state.input_first_name,
+        this.state.input_last_name,
+        this.state.input_area_code,
+        this.state.input_phone,
+        this.state.input_email,
+        this.state.input_password
+    ).then(data => {
+      this.setState({ 
+        modify_err: data.CUSTOMERS.length === 0, 
+        customerSnackbar: true, 
+        disabled: true,
+        customers: data.CUSTOMERS
+      })
+    })
+  }
+
+  // to cancel editing of customers
+  onCancel = () => {
+    this.setState({ disabled: true })
+  }
+
+  // handle textfield input for email (for modify customer)
+  handleInputEmail = (event) =>  {
+    this.setState({ input_email: event.target.value })
+  }
+
+  // handle textfield input for password (for modify customer)
+  handleInputPass = (event) => {
+    this.setState({ input_password: event.target.value })
+  }
+
+  // handle textfield input for first name (for modify customer)
+  handleInputFirstName = event => {
+    this.setState({ input_first_name: event.target.value })
+  }
+
+  // handle textfield input for last name (for modify customer)
+  handleInputLastName = event => {
+    this.setState({ input_last_name: event.target.value })
+  }
+
+  // handle textfield input for area code (for modify customer)
+  handleInputAreaCode = event => {
+    this.setState({ input_area_code: event.target.value })
+  }
+
+  // handle textfield input for phone (for modify customer)
+  handleInputPhone = event => {
+    this.setState({ input_phone: event.target.value })
   }
 
   // as long as the transfer amount is not negative, (i.e. the
@@ -293,6 +405,14 @@ class App extends Component {
     this.setState({ acc_to: event.target.value })
   }
 
+  handleDialogClose = () => {
+    this.setState({ dialogOpen: false })
+  }
+
+  handleDialog = () => {
+    this.setState({ dialogOpen: true })
+  }
+
   // handle textfield input for amount (for transactions)
   handleAmt = event => {
     // check if the first character of the transaction amount is a '-', i.e.,
@@ -305,6 +425,79 @@ class App extends Component {
         amt_err: false
       })
     }
+  }
+
+  // handle textfield input for amount (for bank account creation)
+  handleStartingBalance = event => {
+    // check if the first character of the transaction amount is a '-', i.e.,
+    // the amount is negative. if it is, set the amount error to true
+    if (event.target.value.charAt(0) === '-') {
+      this.setState({ amt_err: true })
+    } else {
+      this.setState({ 
+        starting_balance: event.target.value,
+        amt_err: false
+      })
+    }
+  }
+
+  // on bank account creation, will check if the starting balance is negative. if its not,
+  // it will call the create_bank_account method in api.js with the account type and starting
+  // balance. if the starting balance is negative, the user will not be able to create the account
+  createBankAccount = () => {
+    if (this.state.acc_type === '3' && this.state.starting_balance < 5000) {
+        this.setState({ 
+          acc_err: true,
+          accSnackbar: true
+        })
+      return
+    }
+      
+    if (!this.state.amt_err) {
+      create_bank_account(
+      this.state.acc_type,
+      this.state.starting_balance
+    ).then(data => {
+      this.setState({ 
+        acc_err: data.length === 0,
+        accSnackbar: true,
+        accounts: data.ACCOUNTS,
+        balances: data.BALANCES
+       })
+    })
+    }
+  }
+
+  // on account deletion, the delete_account method will be called in api.js
+  // with the account number
+  onAccountDelete = () => {
+    delete_account(this.state.account_num).then(data => {
+
+      console.log(data)
+
+      if (data === 0) {
+        this.setState({ 
+          delete_err: true,
+          deleteSnackbar: true,
+          dialogOpen: false
+        })
+
+        return
+      }
+
+      this.setState({ 
+        delete_err: false,
+        deleteSnackbar: true,
+        dialogOpen: false,
+        accounts: data.ACCOUNTS,
+        balances: data.BALANCES
+       })
+    })
+  }
+
+  // get account type value from drop down (for create bank account)
+  handleAccType = event => {
+    this.setState({ acc_type: event.target.value })
   }
 
   // when a transaction is approved, set the approved value to 1, and call the review_transaction
@@ -368,7 +561,15 @@ class App extends Component {
       transaction_error,
       snackbar,
       debit_card_usage,
-      amt_err
+      amt_err,
+      disabled,
+      acc_err,
+      starting_balance,
+      accSnackbar,
+      customerSnackbar,
+      deleteSnackbar,
+      dialogOpen,
+      delete_err
     } = this.state
 
     return (
@@ -488,6 +689,18 @@ class App extends Component {
                 // pass necessary state variables
                 logged_in={logged_in}
                 customers={customers}
+                handleInputAreaCode={this.handleInputAreaCode}
+                handleInputEmail={this.handleInputEmail}
+                handleInputFirstName={this.handleInputFirstName}
+                handleInputPass={this.handleInputPass}
+                handleInputLastName={this.handleInputLastName}
+                handleInputPhone={this.handleInputPhone}
+                onEdit={this.onEdit}
+                onCustomerChange={this.onCustomerChange}
+                onCancel={this.onCancel}
+                disabled={disabled}
+                handleCustomerSnackbarClose={this.handleCustomerSnackbarClose}
+                customerSnackbar={customerSnackbar}
               />
             )}
           />
@@ -536,10 +749,16 @@ class App extends Component {
                 // pass necessary methods and state variables
                 transaction_history={transaction_history}
                 logged_in={logged_in}
-                onAccountDelete={this.onAccountDelete}
                 accounts={accounts}
                 account_num={account_num}
                 handleAccChange={this.handleAccChange}
+                deleteSnackbar={deleteSnackbar}
+                handleDeleteSnackbarClose={this.handleDeleteSnackbarClose}
+                onAccountDelete={this.onAccountDelete}
+                dialogOpen={dialogOpen}
+                handleDialogClose={this.handleDialogClose}
+                handleDialog={this.handleDialog}
+                delete_err={delete_err}
               />
             )}
           />
@@ -559,8 +778,15 @@ class App extends Component {
             exact path='/user/create-bank-account' 
             render={() => (
               <CreateBankAccount 
-                // pass necessary state variables
+                // pass necessary methods and state variables
                 logged_in={logged_in}
+                handleStartingBalance={this.handleStartingBalance}
+                handleAccSnackbarClose={this.handleAccSnackbarClose}
+                acc_err={acc_err}
+                createBankAccount={this.createBankAccount}
+                starting_balance={starting_balance}
+                handleAccType={this.handleAccType}
+                accSnackbar={accSnackbar}
               />
             )}
           />

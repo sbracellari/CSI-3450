@@ -142,9 +142,33 @@ def create_bank_account():
     acc_type = request.json.get('acc_type')
     starting_balance = request.json.get('starting_balance')
 
-    # since nothing is returned, there is no result set to iterate through
-    # this will just return the network response (200, 404, 500, etd.)
-    return cur.callproc('createBankAccount', [acc_type, starting_balance, user_id])
+    accounts, balances = [], []
+
+    # call createBankAccount procedure 
+    cur.callproc('createBankAccount', [acc_type, starting_balance, user_id])
+
+    # call getBalances procedure with user ID
+    cur.callproc('getBalances', [user_id])
+
+    # iterate through result set
+    for set in cur.stored_results():
+        for row in set:
+            balances.append(dict(zip(set.column_names,row))) # append each row to an array
+
+    # call the getAccounts procedure with user ID
+    cur.callproc('getAccounts', [user_id])
+
+    # iterate through the result set
+    for set in cur.stored_results():
+        for row in set:
+            accounts.append(dict(zip(set.column_names,row))) # append each row to an array
+    
+    # jsonify the four arrays so the frontend will accept the return value
+    return jsonify({
+        'BALANCES': balances, 
+        'ACCOUNTS': accounts
+    })
+
 
 # MAIN ACTOR: ADMINISTRATOR
 # PREDICTED QUERIES TO BE USED: MySQL UPDATE
@@ -168,17 +192,20 @@ def modify_customer():
 
         # call the modifyCustomer procedure with all of the above attributes
         cur.callproc('modifyCustomer', [user_id, first_name, last_name, area_code, phone, email, password])
+        
+        # call the getCustomers procedure with user ID
+        cur.callproc('getCustomers', [user_id])
 
-        res = []
+        customers = []
 
         # iterate through the result set
         for set in cur.stored_results():
             for row in set:
-                res.append(dict(zip(set.column_names,row))) # append each row to an array
+                customers.append(dict(zip(set.column_names,row))) # append each row to an array
                 
         # jsonify the result so the frontend will accept it
         return jsonify({
-            'RES': res
+            'CUSTOMERS': customers
         })
     
     # null check on the user ID
@@ -350,19 +377,53 @@ def get_admin_details():
 # INPUT PARAMETERS: only param needed is account_number
 # OUTPUT: removes the account and its associated updates from the db
 @app.route('/syb-bank/delete-account', methods=['POST']) # POST request since we are manipulating the DB
-def delete_account(): 
-    try : # use a try/catch since user_id is not needed in the query
-        # read the user's ID from local storage using the scraper in scraper.py
-        user_id = s.read_local_storage()
+def delete_account():
 
-        # get request attribute from the frontend
-        account_number = request.json.get('account_num')
+    # read the user's ID from local storage using the scraper in scraper.py
+    # user_id = s.read_local_storage()
 
-        # since nothing is returned, there is no result set to iterate through
-        # this will just return the network response (200, 404, 500, etd.)
-        return cur.callproc('deleteBankAccount', [account_number])
+    user_id = 3
+
+    # get request attribute from the frontend
+    account_number = request.json.get('account_num')
+
+    balances, accounts, data = [], [], []
+
+    cur.callproc('isChecking1', [account_number])
+
+    for result in cur.stored_results():
+        data = result.fetchone()
+
+    data = str(data)[1]
+
+    if data == '1':
+        return '0'
     
-    # null check on the user_id
-    except user_id is None:
-        return False # frontend will view this as a failed request and handle it accordingly
+    else:
+        # call deleteBankAccountProcedure
+        cur.callproc('deleteBankAccount', [account_number])
+
+        # call getBalances procedure with user ID
+        cur.callproc('getBalances', [user_id])
+
+        # iterate through result set
+        for set in cur.stored_results():
+            for row in set:
+                balances.append(dict(zip(set.column_names,row))) # append each row to an array
+
+        # call the getAccounts procedure with user ID
+        cur.callproc('getAccounts', [user_id])
+
+        # iterate through the result set
+        for set in cur.stored_results():
+            for row in set:
+                accounts.append(dict(zip(set.column_names,row))) # append each row to an array
+
+        # jsonify the four arrays so the frontend will accept the return value
+        return jsonify({
+            'BALANCES': balances, 
+            'ACCOUNTS': accounts
+        })
+
+    
 app.run() # spins up a server on port 5000
