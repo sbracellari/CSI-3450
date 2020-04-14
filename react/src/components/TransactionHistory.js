@@ -267,7 +267,7 @@ class TransactionHistory extends Component {
       >
         <DialogTitle className={classes.title}>Close this Account?</DialogTitle>
         <DialogContent className={classes.content}>
-          <Typography>Close your SYB Money Market account? <br /> This action cannot be undone.</Typography>
+          <Typography>Are you sure you want to close this account? <br /> This action cannot be undone.</Typography>
         </DialogContent>
         <DialogActions>
           <Button 
