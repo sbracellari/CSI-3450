@@ -1,30 +1,30 @@
 DELIMITER $$
 CREATE DEFINER=`admin`@`%` PROCEDURE `viewTransactionsAdmin`(empid int(11))
 BEGIN
-# outputs transaction id, customer id, account from, account to, update amount, update date
+--  outputs transaction id, customer id, account from, account to, update amount, update date
 SELECT * FROM
-	# outputs the transfers and update amounts between accounts from the perspective of the "to" account receiving from "from" account
+	--  outputs the transfers and update amounts between accounts from the perspective of the "to" account receiving from "from" account
 	(SELECT ACCT_FROM.TRANS_ID, ACCT_FROM.CUS_ID, ACCT_FROM.ACCT_ID AS ACCT_FROM, ACCT_TO.ACCT_ID AS ACCT_TO, ACCT_TO.UPDATE_AMOUNT, ACCT_TO.UPDATE_DATE FROM
 		(SELECT TRANSFER.TRANS_ID, ACCT_ID, UPDATE_AMOUNT, UPDATE_DATE FROM TRANSFER
-        # when amount is > 0, assume deposit into "to" account
+        --  when amount is > 0, assume deposit into "to" account
 		INNER JOIN `UPDATE`
 		ON TRANSFER.TRANS_ID = `UPDATE`.TRANS_ID
 		WHERE EMP_ID = empid AND TRANS_APPROVED = 0 AND UPDATE_AMOUNT > 0.00) AS ACCT_TO,
-        # when amount is < 0, assume withdraw from "from" account
+        --  when amount is < 0, assume withdraw from "from" account
 		(SELECT TRANSFER.TRANS_ID, ACCT_ID, CUS_ID FROM TRANSFER
 		INNER JOIN `UPDATE`
 		ON TRANSFER.TRANS_ID = `UPDATE`.TRANS_ID
 		WHERE EMP_ID = empid AND TRANS_APPROVED = 0 AND UPDATE_AMOUNT < 0.00) AS ACCT_FROM
-	#excludes normal deposits and withdrawals
+	-- excludes normal deposits and withdrawals
 	WHERE NOT (ACCT_TO.ACCT_ID = ACCT_FROM.ACCT_ID) AND ACCT_TO.TRANS_ID = ACCT_FROM.TRANS_ID) AS TRANS
     UNION
-    # outputs normal withdraw updates
+    --  outputs normal withdraw updates
     (SELECT TRANS_ID, CUS_ID, ACCT_ID AS ACCT_FROM, NULL AS ACCT_TO, UPDATE_AMOUNT, UPDATE_DATE 
 	FROM (SELECT TRANSFER.TRANS_ID, CUS_ID, ACCT_ID, UPDATE_AMOUNT, UPDATE_DATE, COUNT(TRANSFER.TRANS_ID) AS C FROM `UPDATE` 
 	INNER JOIN `TRANSFER` ON TRANSFER.TRANS_ID = `UPDATE`.TRANS_ID WHERE EMP_ID = empid AND TRANS_APPROVED = 0 GROUP BY TRANS_ID) AS TR
 	WHERE C = 1 AND UPDATE_AMOUNT < 0.00)
     UNION
-    # outputs normal deposit updates
+    --  outputs normal deposit updates
     (SELECT TRANS_ID, CUS_ID, NULL AS ACCT_FROM, ACCT_ID AS ACCT_TO, UPDATE_AMOUNT, UPDATE_DATE 
 	FROM (SELECT TRANSFER.TRANS_ID, CUS_ID, ACCT_ID, UPDATE_AMOUNT, UPDATE_DATE, COUNT(TRANSFER.TRANS_ID) AS C FROM `UPDATE` 
 	INNER JOIN `TRANSFER` ON TRANSFER.TRANS_ID = `UPDATE`.TRANS_ID WHERE EMP_ID = empid AND TRANS_APPROVED = 0 GROUP BY TRANS_ID) AS TR
