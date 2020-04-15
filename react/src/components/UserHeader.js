@@ -1,3 +1,4 @@
+// import necessary packages
 import React, { Component } from 'react'
 import { withStyles } from '@material-ui/core/styles'
 import AppBar from '@material-ui/core/AppBar'
@@ -6,6 +7,7 @@ import Button from '@material-ui/core/Button'
 import Toolbar from '@material-ui/core/Toolbar'
 import { Link } from "react-router-dom"
 
+// apply styles
 const styles = () => ({
  img: {
     backgroundImage: 'url(' + require('../img/syb-logo.png') + ')',
@@ -75,82 +77,88 @@ const styles = () => ({
 
 class UserHeader extends Component {
   render() {
-    const { classes, onLogout } = this.props
+    const { 
+      classes, 
+      onLogout // get props passed in App.js
+    } = this.props
+
     return (
       <div className={classes.root}>
-      <AppBar
-        className={classes.bar}
-        position="static"
-      >
-      <div className={classes.display}>
-        <div className={classes.container}>
-          <Link to='/user/home' className={classes.img} />
-          <Typography className={classes.title}>Take hold of your finances</Typography>
-        </div>
-        <Toolbar className={classes.toolbar1}>
-            <Button
-              classes={{root: classes.btn}}
-              className={classes.button2}
-            >
+        <AppBar
+          className={classes.bar}
+          position="static"
+        >
+          <div className={classes.display}>
+            <div className={classes.container}>
+              <Link 
+                to='/user/home' // link to user home page
+                className={classes.img} 
+              />
+              <Typography className={classes.title}>Take hold of your finances</Typography>
+            </div>
+            <Toolbar className={classes.toolbar1}>
+              <Button
+                classes={{root: classes.btn}}
+                className={classes.button2}
+              >
                 About
-            </Button>
-            <Button
-              classes={{root: classes.btn}}
-              className={classes.button2}
-            >
+              </Button>
+              <Button
+                classes={{root: classes.btn}}
+                className={classes.button2}
+              >
                 FAQ
-            </Button>
-            <Button
-              classes={{root: classes.btn}}
-              className={classes.button2}
-            >
+              </Button>
+              <Button
+                classes={{root: classes.btn}}
+                className={classes.button2}
+              >
                 Help
+              </Button>
+            </Toolbar>
+          </div>
+          <div className={classes.display}>
+            <Toolbar className={classes.toolbar2}>
+              <Button
+                component={Link}
+                to='/user/initiate-transaction' // link to transactions page
+                classes={{root: classes.btn}}
+              >
+                Initiate a transaction
+              </Button>
+              <Button
+                component={Link}
+                to='/user/transaction-history' // link to transaction history page
+                classes={{root: classes.btn}}
+              >
+                Transaction history
+              </Button>
+              <Button
+                component={Link}
+                to='/user/weekly-spending' // link to weekly spending page
+                classes={{root: classes.btn}}
+              >
+                Spending by week
+              </Button>
+              <Button
+                component={Link}
+                to='/user/create-bank-account' // link to create bank account page
+                classes={{root: classes.btn}}
+              >
+                Create bank account
+              </Button>
+            </Toolbar>
+            <Button 
+              classes={{root: classes.logout}}
+              className={classes.button}
+              component={Link}
+              onClick={onLogout} // defined in App.js
+              to='/' // link to welcome page
+            >
+              LOGOUT
             </Button>
-        </Toolbar>
-
-      </div>
-      <div className={classes.display}>
-      <Toolbar className={classes.toolbar2}>
-          <Button
-            component={Link}
-            to='/user/initiate-transaction'
-            classes={{root: classes.btn}}
-          >
-            Initiate a transaction
-          </Button>
-          <Button
-            component={Link}
-            to='/user/transaction-history'
-            classes={{root: classes.btn}}
-          >
-            Transaction history
-          </Button>
-          <Button
-            component={Link}
-            to='/user/weekly-spending'
-            classes={{root: classes.btn}}
-          >
-            Spending by week
-          </Button>
-          <Button
-            component={Link}
-            to='/user/create-bank-account'
-            classes={{root: classes.btn}}
-          >
-            Create bank account
-          </Button>
-      </Toolbar>
-      <Button 
-        classes={{root: classes.logout}}
-        className={classes.button}
-        component={Link}
-        onClick={onLogout}
-        to='/'
-      >
-        LOGOUT
-      </Button>
-      </div>
-      </AppBar>
+          </div>
+        </AppBar>
       </div>
     )
   }

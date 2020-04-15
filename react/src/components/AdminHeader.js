@@ -1,3 +1,4 @@
+// import necessary packages
 import React, { Component } from 'react'
 
 import AppBar from '@material-ui/core/AppBar'
@@ -9,6 +10,7 @@ import { Link } from 'react-router-dom'
 
 import { withStyles } from '@material-ui/core/styles'
 
+// apply styles
 const styles = () => ({
   img: {
     backgroundImage: 'url(' + require('../img/syb-logo.png') + ')',
@@ -78,62 +80,68 @@ const styles = () => ({
 
 class AdminHeader extends Component {
   render() {
-    const { classes, onLogout } = this.props
-    return (
-      <div className={classes.root}>
+  const { 
+    classes, 
+    onLogout // get props passed from App.js
+  } = this.props
+
+  return (
+    <div className={classes.root}>
       <AppBar
         className={classes.bar}
         position="static"
       >
-      <div className={classes.display}>
-        <div className={classes.container}>
-          <Link to='/admin/home' className={classes.img} />
-          <Typography className={classes.title}>Take hold of your finances</Typography>
-        </div>
-        <Toolbar className={classes.toolbar1}>
+        <div className={classes.display}>
+          <div className={classes.container}>
+            <Link 
+              to='/admin/home' // navigate to admin home page
+              className={classes.img} 
+            />
+            <Typography className={classes.title}>Take hold of your finances</Typography>
+          </div>
+          <Toolbar className={classes.toolbar1}>
             <Button
               classes={{root: classes.btn}}
               className={classes.button2}
             >
-                About
+              About
             </Button>
             <Button
               classes={{root: classes.btn}}
               className={classes.button2}
             >
-                FAQ
+              FAQ
             </Button>
             <Button
               classes={{root: classes.btn}}
               className={classes.button2}
             >
-                Help
+              Help
             </Button>
         </Toolbar>
-
       </div>
       <div className={classes.display}>
       <Toolbar className={classes.toolbar2}>
-          <Button
-            component={Link}
-            to='/admin/my-customers'
-            classes={{root: classes.btn}}
-          >
-            My customers
-          </Button>
-          <Button
-            component={Link}
-            to='/admin/pending-transactions'
-            classes={{root: classes.btn}}
-          >
-            Pending transactions
-          </Button>
+        <Button
+          component={Link}
+          to='/admin/my-customers' // navigate to customers page
+          classes={{root: classes.btn}}
+        >
+          My customers
+        </Button>
+        <Button
+          component={Link}
+          to='/admin/pending-transactions' // navigate to pending transactions page
+          classes={{root: classes.btn}}
+        >
+          Pending transactions
+        </Button>
       </Toolbar>
       <Button
         classes={{root: classes.logout}}
         className={classes.button}
         component={Link}
-        onClick={onLogout}
+        onClick={onLogout} // call logout function in App.js
         to='/'
       >
         LOGOUT

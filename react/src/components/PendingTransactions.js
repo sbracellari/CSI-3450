@@ -1,3 +1,4 @@
+// import necessary packages
 import React, { Component } from 'react'
 import { withStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
@@ -10,6 +11,7 @@ import TableRow from '@material-ui/core/TableRow'
 import Button from '@material-ui/core/Button'
 import { Redirect } from 'react-router-dom'
 
+// apply styles
 const styles = () => ({
   approve: {
     display: 'flex',
@@ -62,82 +64,90 @@ const styles = () => ({
 })
 
 class PendingTransactions extends Component {
-    render () {
-      const { classes, pending_transactions, onApprove, onDeny, logged_in } = this.props
-    
-      if (!logged_in) {
-        return <Redirect to="/" />
-      }
+  render () {
+  const { 
+    classes, 
+    pending_transactions, // get props passed in App.js
+    onApprove, 
+    onDeny, 
+    logged_in 
+  } = this.props
+   
+  // check if user is logged in. if not, redirect to welcome page
+  if (!logged_in) {
+    return <Redirect to="/" />
+  }
 
-        return (
-            <div className={classes.background}>
-              <div className={classes.container}>
-                <Typography className={classes.txt}>Pending Transactions</Typography>
-                <div className={classes.paper}>
-                  {pending_transactions.length === 0 ? (
-                    <Typography className={classes.data}>No data to display at this time.</Typography>
-                  ) : (
-                    <TableContainer>
-                    <Table>
-                      <TableHead>
-                        <TableRow>
-                          <TableCell className={classes.tblTitle} align="center">Transaction ID</TableCell>
-                          <TableCell className={classes.tblTitle} align="center">Customer ID</TableCell>
-                          <TableCell className={classes.tblTitle} align="center">Account From</TableCell>
-                          <TableCell className={classes.tblTitle} align="center">Account To</TableCell>
-                          <TableCell className={classes.tblTitle} align="center">Update Amount</TableCell>
-                          <TableCell className={classes.tblTitle} align="center">Update Date</TableCell>
-                          <TableCell className={classes.tblTitle} align="center">Status</TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {pending_transactions.map((transactions, i) =>
-                        <TableRow key={i}>
-                          <TableCell className={classes.body} align="center">
-                            {transactions.TRANS_ID === null ? 'N/A' : transactions.TRANS_ID}
-                            </TableCell>
-                          <TableCell className={classes.body} align="center">
-                            {transactions.CUS_ID === null ? 'N/A' : transactions.CUS_ID}
-                            </TableCell>
-                          <TableCell className={classes.body} align="center">
-                            {transactions.ACCT_FROM === null ? 'N/A' : transactions.ACCT_FROM}
-                          </TableCell>
-                          <TableCell className={classes.body} align="center">
-                            {transactions.ACCT_TO === null ? 'N/A' : transactions.ACCT_TO}
-                          </TableCell>
-                          <TableCell className={classes.body} align="center">
-                            {transactions.UPDATE_AMT === null ? 'N/A' : transactions.UPDATE_AMOUNT}
-                          </TableCell>
-                          <TableCell className={classes.body} align="center">
-                            {transactions.UPDATE_DATE === null ? 'N/A' : transactions.UPDATE_DATE}
-                          </TableCell>
-                          <TableCell className={classes.approve} align="center">
-                            <Button 
-                              size="small" 
-                              className={classes.btn}
-                              onClick={() => onApprove(i)}
-                            >
-                              Approve
-                            </Button>
-                            <Button 
-                              size="small" 
-                              className={classes.btn}
-                              onClick={() => onDeny(i)}
-                            >
-                              Deny
-                            </Button> 
-                          </TableCell>
-                        </TableRow>
-                        )}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
+  return (
+    <div className={classes.background}>
+      <div className={classes.container}>
+        <Typography className={classes.txt}>Pending Transactions</Typography>
+        <div className={classes.paper}>
+          {pending_transactions.length === 0 ? ( // check if there are any pending transactions
+            <Typography className={classes.data}>No data to display at this time.</Typography>
+          ) : (
+            <TableContainer>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell className={classes.tblTitle} align="center">Transaction ID</TableCell>
+                    <TableCell className={classes.tblTitle} align="center">Customer ID</TableCell>
+                    <TableCell className={classes.tblTitle} align="center">Account From</TableCell>
+                    <TableCell className={classes.tblTitle} align="center">Account To</TableCell>
+                    <TableCell className={classes.tblTitle} align="center">Update Amount</TableCell>
+                    <TableCell className={classes.tblTitle} align="center">Update Date</TableCell>
+                    <TableCell className={classes.tblTitle} align="center">Status</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {pending_transactions.map((transactions, i) => // map pending transactions to a table
+                    <TableRow key={i}>
+                      <TableCell className={classes.body} align="center">
+                        {/* perform null checks on each column */}
+                        {transactions.TRANS_ID === null ? 'N/A' : transactions.TRANS_ID}
+                      </TableCell>
+                      <TableCell className={classes.body} align="center">
+                        {transactions.CUS_ID === null ? 'N/A' : transactions.CUS_ID}
+                      </TableCell>
+                      <TableCell className={classes.body} align="center">
+                        {transactions.ACCT_FROM === null ? 'N/A' : transactions.ACCT_FROM}
+                      </TableCell>
+                      <TableCell className={classes.body} align="center">
+                        {transactions.ACCT_TO === null ? 'N/A' : transactions.ACCT_TO}
+                      </TableCell>
+                      <TableCell className={classes.body} align="center">
+                        {transactions.UPDATE_AMT === null ? 'N/A' : transactions.UPDATE_AMOUNT}
+                      </TableCell>
+                      <TableCell className={classes.body} align="center">
+                        {transactions.UPDATE_DATE === null ? 'N/A' : transactions.UPDATE_DATE}
+                      </TableCell>
+                      <TableCell className={classes.approve} align="center">
+                        <Button 
+                          size="small" 
+                          className={classes.btn}
+                          onClick={() => onApprove(i)} // defined in App.js
+                        >
+                          Approve
+                        </Button>
+                        <Button 
+                          size="small" 
+                          className={classes.btn}
+                          onClick={() => onDeny(i)} // defined in App.js
+                        >
+                          Deny
+                        </Button> 
+                      </TableCell>
+                    </TableRow>
                   )}
-                </div>
-              </div>
-            </div>
-        )
-    }
+                </TableBody>
+              </Table>
+            </TableContainer>
+          )}
+        </div>
+      </div>
+    </div>
+    )
+  }
 }
 
 export default withStyles(styles)(PendingTransactions)

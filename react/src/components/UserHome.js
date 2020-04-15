@@ -1,3 +1,4 @@
+// import necessary packages
 import React, { Component } from 'react'
 import { withStyles } from '@material-ui/core/styles'
 import Grid from '@material-ui/core/Grid'
@@ -5,7 +6,6 @@ import Paper from '@material-ui/core/Card'
 import { Typography, Button, List, ListItem, ListItemSecondaryAction } from '@material-ui/core'
 import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
-import CardActions from '@material-ui/core/CardActions'
 import ListItemText from '@material-ui/core/ListItemText'
 import { Link, Redirect } from 'react-router-dom'
 import Table from '@material-ui/core/Table'
@@ -15,6 +15,7 @@ import TableContainer from '@material-ui/core/TableContainer'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
 
+// apply styles
 const styles = () => ({
   background: {
     backgroundColor: '#232428',
@@ -127,8 +128,14 @@ const styles = () => ({
 
 class UserHome extends Component {
   render() {
-    const { classes, weekly_spending, transaction_history, balances, logged_in, debit_card_usage } = this.props
+    const { 
+      classes, 
+      balances, // get props passed in App.js
+      logged_in, 
+      debit_card_usage 
+    } = this.props
 
+    // check if user is logged in, and if not, redirect to welcome page
     if (!logged_in) {
       return <Redirect to="/" />
     }
@@ -162,7 +169,7 @@ class UserHome extends Component {
                         size="small" 
                         className={classes.infoBtn}
                         component={Link}
-                        to='/user/weekly-spending'
+                        to='/user/weekly-spending' // link to weekly spending page
                       >
                         More information
                       </Button>
@@ -204,8 +211,9 @@ class UserHome extends Component {
                           </TableRow>
                         </TableHead>
                         <TableBody>
-                          {balances.slice(0, 4).map((balances, i) => 
+                          {balances.slice(0, 4).map((balances, i) => // ma balances to a table, only show first 4
                             <TableRow key={i}>
+                              {/* null check on each column */}
                               <TableCell className={classes.body} align="center">
                                 {balances.ACCT_TYPE === null ? 'N/A' : balances.ACCT_TYPE}
                               </TableCell>

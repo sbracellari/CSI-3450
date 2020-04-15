@@ -1,8 +1,9 @@
+// import necessary packages
 import React, { Component } from 'react'
 import { withStyles } from '@material-ui/core/styles'
 import Grid from '@material-ui/core/Grid'
 import Paper from '@material-ui/core/Card'
-import { Typography, Button, List } from '@material-ui/core'
+import { Typography, Button } from '@material-ui/core'
 import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
 import CardActions from '@material-ui/core/CardActions'
@@ -14,6 +15,7 @@ import TableContainer from '@material-ui/core/TableContainer'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
 
+//apply styles 
 const styles = () => ({
   background: {
     backgroundColor: '#232428',
@@ -80,8 +82,14 @@ const styles = () => ({
 
 class AdminHome extends Component {
   render() {
-    const { classes, customers, pending_transactions, logged_in } = this.props
+    const { 
+      classes, 
+      customers, // get props passed from App.js
+      pending_transactions, 
+      logged_in 
+    } = this.props
 
+    // check if user is still logged in. if not, redirect them to the welcome page
     if (!logged_in) {
       return <Redirect to="/" />
     }
@@ -95,7 +103,7 @@ class AdminHome extends Component {
             <Paper className={classes.paper}>
               <Card className={classes.card}>
                 <CardContent>
-                  {customers.length === 0 ? (
+                  {customers.length === 0 ? ( // check if the admin has any managed customers
                     <Typography className={classes.data}>No data to display at this time.</Typography>
                   ) : (
                     <TableContainer>
@@ -109,10 +117,10 @@ class AdminHome extends Component {
                           </TableRow>
                         </TableHead>
                         <TableBody>
-                          {customers.slice(0, 3).map((customer, i) => 
+                          {customers.slice(0, 3).map((customer, i) => // only show the fist three customers on the home page
                             <TableRow key={i}>
                               <TableCell className={classes.body} align="center">
-                                {customer.USER_ID === null ? 'N/A' : customer.USER_ID}
+                                {customer.USER_ID === null ? 'N/A' : customer.USER_ID} 
                               </TableCell>
                               <TableCell className={classes.body} align="center">
                                 {customer.USER_FNAME === null ? 'N/A' : customer.USER_FNAME}
@@ -134,7 +142,7 @@ class AdminHome extends Component {
                   <Button 
                     className={classes.infoBtn}
                     component={Link}
-                    to='/admin/my-customers'
+                    to='/admin/my-customers' // link to dedicated customers page
                   >
                     View more
                   </Button>
@@ -147,7 +155,7 @@ class AdminHome extends Component {
             <Paper className={classes.paper}>
               <Card className={classes.card}>
                 <CardContent>
-                  {pending_transactions.length === 0 ? (
+                  {pending_transactions.length === 0 ? ( // check if there are any pending transactions
                     <Typography className={classes.data}>No data to display at this time.</Typography>
                   ) : (
                     <TableContainer>
@@ -162,7 +170,7 @@ class AdminHome extends Component {
                         </TableRow>
                       </TableHead>
                       <TableBody>
-                        {pending_transactions.slice(0, 3).map((transactions, i) => 
+                        {pending_transactions.slice(0, 3).map((transactions, i) => // only show first three transactions on home page
                         <TableRow key={i}>
                           <TableCell className={classes.body} align="center">
                             {transactions.TRANS_ID === null ? 'N/A' : transactions.TRANS_ID}
@@ -190,7 +198,7 @@ class AdminHome extends Component {
                   <Button
                     className={classes.infoBtn}
                     component={Link}
-                    to='/admin/pending-transactions'  
+                    to='/admin/pending-transactions' // link to dedicated pending transactions page
                   >
                     View more
                   </Button>

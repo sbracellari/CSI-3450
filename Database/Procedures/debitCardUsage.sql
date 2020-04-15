@@ -1,0 +1,16 @@
+DELIMITER $$
+CREATE DEFINER=`admin`@`%` PROCEDURE `debitCardUsage`(cusid int(11))
+BEGIN
+-- This selects the approved debit card withdraws from a customer's checking account for the week. 
+SELECT (0 - SUM(UPDATE_AMOUNT)) AS DEBIT FROM `UPDATE`
+INNER JOIN TRANSFER
+ON TRANSFER.TRANS_ID = `UPDATE`.TRANS_ID
+INNER JOIN `ACCOUNT`
+ON `UPDATE`.ACCT_ID = `ACCOUNT`.ACCT_ID
+WHERE TRANSFER.CUS_ID = cusid 
+AND isChecking(ACCT_NUMBER) = 1
+AND UPDATE_AMOUNT < 0.00 
+AND TRANS_APPROVED = 1 
+AND DATEDIFF(NOW(), UPDATE_DATE) <= 7;
+END$$
+DELIMITER ;

@@ -1,3 +1,4 @@
+// import necessary packages
 import React, { Component } from 'react'
 import { withStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
@@ -10,8 +11,8 @@ import { Redirect } from 'react-router-dom'
 import Snackbar from '@material-ui/core/Snackbar'
 import ClearIcon from '@material-ui/icons/Clear'
 import IconButton from '@material-ui/core/IconButton'
-import { create_bank_account } from '../api/api'
 
+// apply styles
 const styles = () => ({
   background: {
     backgroundColor: '#232428',
@@ -89,75 +90,53 @@ const BootstrapInput = withStyles((theme) => ({
   },
 }))(InputBase)
 
-class CreateBankAccount extends Component {
-  state = {
-    snackbar: false,
-    acc_type: 0,
-    starting_balance: 0,
-    acc_err: false,
-    amt_err: false
-  }
-
-  handleSnackbarClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return
-    }
-
-    this.setState({ 
-      snackbar: false
-    })
-  }
-
-  createBankAccount = () => {
-    if (!this.state.amt_err) {
-      create_bank_account(
-      this.state.acc_type,
-      this.state.starting_balance
-    ).then(data => {
-      this.setState({ 
-        acc_err: !data,
-        snackbar: true
-       })
-    })
-    }
-  }
-
+class CreateBankAccount extends Component { 
   render () {
-    const { classes, logged_in } = this.props
+    const { 
+      classes, 
+      logged_in, // get props passed from App.js
+      accSnackbar,
+      handleAccSnackbarClose,
+      createBankAccount,
+      acc_err,
+      handleAccType,
+      handleStartingBalance
+    } = this.props
 
+    // check if the user is still logged in. if not, redirect them to
+    // the welcome page
     if (!logged_in) {
       return <Redirect to='/' />
     }
 
     return (
       <div className={classes.background}>
-
         <Snackbar
-            action={
-              <React.Fragment>
-                <IconButton
-                  aria-label='close'
-                  color='inherit'
-                  onClick={this.handleSnackbarClose}
-                  size='small'
-                >
-                  <ClearIcon fontSize='small' />
-                </IconButton>
-              </React.Fragment>
-            }
-            anchorOrigin={{
-              horizontal: 'center',
-              vertical: 'bottom'
-            }}
-            autoHideDuration={6000}
-            onClose={this.handleSnackbarClose}
-            open={this.state.snackbar}
-            message={
-              this.state.acc_err
-                ? 'Account could not be created at this time.' 
-                : 'Account creation successful.'
-            }
-          />
+          action={
+            <React.Fragment>
+              <IconButton
+                aria-label='close'
+                color='inherit'
+                onClick={handleAccSnackbarClose}
+                size='small'
+              >
+                <ClearIcon fontSize='small' />
+              </IconButton>
+            </React.Fragment>
+          }
+          anchorOrigin={{
+            horizontal: 'center',
+            vertical: 'bottom'
+          }}
+          autoHideDuration={6000}
+          onClose={handleAccSnackbarClose}
+          open={accSnackbar}
+          message={
+            acc_err
+              ? 'Account could not be created at this time.' 
+              : 'Account creation successful.'
+          }
+        />
         <div className={classes.container}>
           <Typography className={classes.txt}>Create an Account</Typography>
           <div className={classes.paper}>
@@ -168,7 +147,7 @@ class CreateBankAccount extends Component {
                   classes={{
                     icon: classes.icon
                   }}
-                  onChange={(event) => this.setState({ acc_type: event.target.value })}
+                  onChange={handleAccType} // defined in App.js
                   input={<BootstrapInput />}
                 >
                   <option aria-label="None" value="" />
@@ -179,16 +158,7 @@ class CreateBankAccount extends Component {
                <FormControl className={classes.form}>
                 <BootstrapInput
                   classes={{root: classes.input}}
-                  onChange={(event) => {
-                    if (event.target.value.charAt(0) === '-') {
-                      this.setState({ amt_err: true })
-                    } else {
-                      this.setState({ 
-                        starting_balance: event.target.value,
-                        amt_err: false
-                      })
-                    }
-                  }}
+                  onChange={handleStartingBalance} // defined in App.js
                   className={classes.bootStrap}
                   placeholder="Starting Balance..."
                 />
@@ -200,7 +170,7 @@ class CreateBankAccount extends Component {
             </form>
             <Button 
               className={classes.btn}
-              onClick={this.createBankAccount}
+              onClick={createBankAccount} // defined in App.js
             >
               Create Account
             </Button>

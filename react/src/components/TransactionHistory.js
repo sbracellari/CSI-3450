@@ -1,3 +1,4 @@
+// import necessary packages
 import React, { Component } from 'react'
 import { withStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
@@ -20,8 +21,8 @@ import { Redirect } from 'react-router-dom'
 import Snackbar from '@material-ui/core/Snackbar'
 import ClearIcon from '@material-ui/icons/Clear'
 import IconButton from '@material-ui/core/IconButton'
-import { delete_account } from '../api/api'
 
+// apply styles
 const styles = () => ({
   background: {
     backgroundColor: '#232428',
@@ -135,169 +136,154 @@ const BootstrapInput = withStyles((theme) => ({
 }))(InputBase)
 
 class TransactionHistory extends Component {
-  state={
-    dialogOpen: false,
-    snackbar: false,
-    delete_err: false
-  }
+   render () {
+    const { 
+      classes, 
+      logged_in, // get props passed in App.js
+      transaction_history, 
+      accounts, 
+      handleAccChange,
+      delete_err,
+      deleteSnackbar,
+      handleDeleteSnackbarClose,
+      onAccountDelete,
+      dialogOpen,
+      handleDialogClose,
+      handleDialog
+    } = this.props
 
-  handleSnackbarClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return
-    }
-
-    this.setState({ 
-      snackbar: false
-    })
-  }
-
-  handleDialogClose = () => {
-    this.setState({ dialogOpen: false })
-  }
-
-  onAccountDelete = () => {
-    delete_account(this.props.account_num).then(data => {
-      this.setState({ 
-        delete_err: !data,
-        snackbar: true,
-        dialogOpen: false
-       })
-    })
-  }
-
-  render () {
-    const { classes, logged_in, transaction_history, accounts, handleAccChange, account_num} = this.props
-    const { dialogOpen } = this.state
-
+    // check if user is logged in. if they aren't, redirect to welcome page
     if (!logged_in) {
       return <Redirect to='/'/>
     }
 
     return (
       <div className={classes.background}>
-
         <Snackbar
-            action={
-              <React.Fragment>
-                <IconButton
-                  aria-label='close'
-                  color='inherit'
-                  onClick={this.handleSnackbarClose}
-                  size='small'
-                >
-                  <ClearIcon fontSize='small' />
-                </IconButton>
-              </React.Fragment>
-            }
-            anchorOrigin={{
-              horizontal: 'center',
-              vertical: 'bottom'
-            }}
-            autoHideDuration={6000}
-            onClose={this.handleSnackbarClose}
-            open={this.state.snackbar}
-            message={
-              this.state.delete_err 
-                ? 'Account could not be deleted.' 
-                : 'Account deleted successfully.'
-            }
-          />
-        <div className={classes.box}>
-        <div className={classes.container}>
-          <div className={classes.main}>
-          <Typography className={classes.txt}>Transaction History</Typography>
-          <form autoComplete="off">
-            <FormControl className={classes.form}>
-              <InputLabel classes={{root: classes.input}}>Account</InputLabel>
-              <NativeSelect
-                classes={{
-                  icon: classes.icon
-                }}
-                onChange={handleAccChange}
-                input={<BootstrapInput />}
+          action={
+            <React.Fragment>
+              <IconButton
+                aria-label='close'
+                color='inherit'
+                onClick={handleDeleteSnackbarClose}
+                size='small'
               >
-                  <option>None</option>
-                {accounts.map((accounts, i) =>
-                  <option key={i}>{accounts.ACCT_NUMBER}</option>
-                )}
-              </NativeSelect>
-            </FormControl>
-          </form>
-          </div>
-          <div className={classes.paper}>
-            {transaction_history.length === 0 ? (
-              <Typography className={classes.data}>No data to display at this time.</Typography>
-            ) : (
-              <TableContainer>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell className={classes.tblTitle} align="center">Update Amount</TableCell>
-                      <TableCell className={classes.tblTitle} align="center">Update Date</TableCell>
-                      <TableCell className={classes.tblTitle} align="center">Status</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {transaction_history.map((history, i) => 
-                      <TableRow key={i}>
-                        {history.UPDATE_AMOUNT === null ? (
-                          'N/A'
-                        ) : (
-                          history.UPDATE_AMOUNT < 0 ? (
-                            <TableCell className={classes.red} align="center">
-                              {history.UPDATE_AMOUNT}
-                            </TableCell>
-                          ) : (
-                            <TableCell className={classes.green} align="center">
-                              +{history.UPDATE_AMOUNT}
-                            </TableCell>
-                          )
-                        )}
-                        <TableCell className={classes.body} align="center">
-                          {history.UPDATE_DATE === null ? 'N/A' : history.UPDATE_DATE}
-                        </TableCell>
-                        <TableCell className={classes.body} align="center">
-                          {history.APPROVED === null ? 'N/A' : history.APPROVED}
-                        </TableCell>
-                      </TableRow>
+                <ClearIcon fontSize='small' />
+              </IconButton>
+            </React.Fragment>
+          }
+          anchorOrigin={{
+            horizontal: 'center',
+            vertical: 'bottom'
+          }}
+          autoHideDuration={6000}
+          onClose={handleDeleteSnackbarClose}
+          open={deleteSnackbar}
+          message={
+            delete_err 
+              ? 'Account could not be deleted.' 
+              : 'Account deleted successfully.'
+          }
+        />
+        <div className={classes.box}>
+          <div className={classes.container}>
+            <div className={classes.main}>
+              <Typography className={classes.txt}>Transaction History</Typography>
+              <form autoComplete="off">
+                <FormControl className={classes.form}>
+                  <InputLabel classes={{root: classes.input}}>Account</InputLabel>
+                  <NativeSelect
+                    classes={{
+                      icon: classes.icon
+                    }}
+                    onChange={handleAccChange}
+                    input={<BootstrapInput />}
+                  >
+                    <option>None</option>
+                    {accounts.map((accounts, i) => // map user accounts to options fields
+                      <option key={i}>{accounts.ACCT_NUMBER}</option>
                     )}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            )}
-            
+                  </NativeSelect>
+                </FormControl>
+              </form>
+            </div>
+            <div className={classes.paper}>
+              {transaction_history.length === 0 ? ( // check if there is any transaction history for the selected account
+                <Typography className={classes.data}>No data to display at this time.</Typography>
+              ) : (
+                <TableContainer>
+                  <Table>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell className={classes.tblTitle} align="center">Update Amount</TableCell>
+                        <TableCell className={classes.tblTitle} align="center">Update Date</TableCell>
+                        <TableCell className={classes.tblTitle} align="center">Status</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {transaction_history.map((history, i) => 
+                        <TableRow key={i}>
+                          {/* check if update amount is null. if it is, display 'N/A'. if it not,
+                          check if it's negative or positive. if negative, make it red, else make
+                          it green and add a plus in front of it */}
+                          {history.UPDATE_AMOUNT === null ? (
+                            'N/A'
+                          ) : (
+                            history.UPDATE_AMOUNT < 0 ? (
+                              <TableCell className={classes.red} align="center">
+                                {history.UPDATE_AMOUNT}
+                              </TableCell>
+                            ) : (
+                              <TableCell className={classes.green} align="center">
+                                +{history.UPDATE_AMOUNT}
+                              </TableCell>
+                            )
+                          )}
+                          {/* null checks on the other two columns */}
+                          <TableCell className={classes.body} align="center">
+                            {history.UPDATE_DATE === null ? 'N/A' : history.UPDATE_DATE}
+                          </TableCell>
+                          <TableCell className={classes.body} align="center">
+                            {history.APPROVED === null ? 'N/A' : history.APPROVED}
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              )}
           </div>
         </div>
-        </div>
-        <Button
-          className={classes.btn}
-          onClick={() => this.setState({ dialogOpen: true })}
-        >
-          Close Account
-        </Button>
-        <Dialog
-          open={dialogOpen}
-          onClose={this.handleDialogClose}
-        >
-          <DialogTitle className={classes.title}>Close this Account?</DialogTitle>
-          <DialogContent className={classes.content}>
-            <Typography>Close your SYB Money Market account? <br /> This action cannot be undone.</Typography>
-          </DialogContent>
-          <DialogActions>
-            <Button 
-              autoFocus
-              onClick={this.handleDialogClose}
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={this.onAccountDelete}
-            >
-              Close Account
-            </Button>
-          </DialogActions>
-        </Dialog>
       </div>
+      <Button
+        className={classes.btn}
+        onClick={handleDialog}
+      >
+        Close Account
+      </Button>
+      <Dialog
+        open={dialogOpen}
+        onClose={handleDialogClose}
+      >
+        <DialogTitle className={classes.title}>Close this Account?</DialogTitle>
+        <DialogContent className={classes.content}>
+          <Typography>Are you sure you want to close this account? <br /> This action cannot be undone.</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button 
+            autoFocus
+            onClick={handleDialogClose}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={onAccountDelete} // defined in App.js
+          >
+            Close Account
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </div>
     ) 
   }
 }

@@ -1,3 +1,4 @@
+// import necessary packages
 import React, { Component } from 'react'
 import { withStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
@@ -9,6 +10,7 @@ import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
 import { Redirect } from 'react-router-dom'
 
+// apply styles
 const styles = () => ({
   background: {
     backgroundColor: '#232428',
@@ -86,8 +88,13 @@ const styles = () => ({
 
 class WeeklySpending extends Component {
   render () {
-    const { classes, weekly_spending, logged_in } = this.props
+    const { 
+      classes, 
+      weekly_spending, // get props passed from App.js
+      logged_in 
+    } = this.props
 
+    // check if user is logged in, and if not, redirect to welcome page
     if (!logged_in) {
       return <Redirect to='/' />
     }
@@ -98,7 +105,7 @@ class WeeklySpending extends Component {
         <div className={classes.container}>
           <Typography className={classes.txt}>Weekly Spending</Typography>
           <div className={classes.paper}>
-            {weekly_spending.length === 0 ? (
+            {weekly_spending.length === 0 ? ( // check if there is any weekly transactions
               <Typography className={classes.data}>No data to display at this time.</Typography>
             ) : (
               <TableContainer>
@@ -112,6 +119,9 @@ class WeeklySpending extends Component {
                   <TableBody>
                     {weekly_spending.map((spending, i) =>
                       <TableRow key={i}>
+                        {/* check if update amount is null. if is is, display 'N/A'. if not,
+                        check if it is negative. if so, make it red. else, make it green and put
+                        a plus in front of it */}
                         {spending.UPDATE_AMOUNT === null ? (
                           'N/A'
                         ) : (
@@ -126,6 +136,7 @@ class WeeklySpending extends Component {
                           )
                         )}
                         <TableCell className={classes.body} align="center">
+                          {/* null check for update date */}
                           {spending.UPDATE_DATE === null ? 'N/A' : spending.UPDATE_DATE}
                         </TableCell>
                       </TableRow>

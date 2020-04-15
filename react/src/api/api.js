@@ -172,7 +172,7 @@ export const create_bank_account = async (acc_type, starting_balance) => {
       })
     })
 
-    const data = response.ok
+    const data = await response.json()
     return data
   } catch (err) {
     return err
@@ -198,8 +198,7 @@ export const modify_customer = async (user_id, first_name, last_name, area_code,
       }),
     })
 
-    const data = response.ok
-    console.log(data)
+    const data = await response.json()
     return data
   } catch (err) {
     return err
@@ -241,7 +240,7 @@ export const delete_account = async (account_num) => {
       })
     })
 
-    const data = response.ok
+    const data = await response.json()
     return data
   } catch (err) {
     return err

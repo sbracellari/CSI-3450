@@ -1,3 +1,4 @@
+// import necessary packages
 import React, { Component } from 'react'
 import { withStyles } from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button'
@@ -8,6 +9,7 @@ import { Link } from 'react-router-dom'
 import PersonIcon from '@material-ui/icons/Person'
 import { Redirect } from 'react-router-dom'
 
+// apply styles 
 const styles = () => ({
   background: {
     background: 'linear-gradient(180deg, #232428 30%, #000000 30%)',
@@ -90,7 +92,7 @@ class Login extends Component {
 
     const { 
       classes, 
-      handleEmail, 
+      handleEmail, // get props passed from App.js
       handlePass,
       logged_in,
       login_err,
@@ -99,61 +101,65 @@ class Login extends Component {
       is_user
     } = this.props
 
-      if (logged_in && is_admin) {
-        return <Redirect to='/admin/home' />
-      } else if (logged_in && is_user) {
-        return <Redirect to='/user/home' />
-      } 
+    // redirect to admin home if the user is logged in and is an admin, redirect to
+    // user home if logged in and is a user
+    if (logged_in && is_admin) {
+      return <Redirect to='/admin/home' />
+    } else if (logged_in && is_user) {
+      return <Redirect to='/user/home' />
+    } 
 
-        return (
-            <div className={classes.background}>
-                <div className={classes.container}>
-                  <div className={classes.img} />
-                  <Typography className={classes.txt}>Take hold of your finances</Typography>
-                   {login_err && (
-                    <Typography className={classes.link}>
-                      Your email or password is incorrect.
-                    </Typography>
-                  )}
-                  <form className={classes.text} noValidate autoComplete="off">
-                    <div className={classes.top}>
-                      <div className={classes.icon}><PersonIcon /></div> 
-                      <TextField 
-                      InputProps={{
-                          className: classes.input
-                      }}
-                      onChange={handleEmail}
-                      placeholder="email" />
-                    </div>
-                    <div className={classes.bottom}>
-                      <div className={classes.icon}><LockOutlinedIcon /></div> 
-                      <TextField 
-                      InputProps={{
-                           className: classes.input
-                      }}
-                      onChange={handlePass}
-                      type="password" placeholder="password" />
-                    </div>
-                  </form> 
-                  <Button 
-                    className={classes.btn}
-                    onClick={onLogin}  
-                  >
-                    login
-                  </Button>
-                </div>
-                <footer className={classes.footer}>
-                    <Typography>New to SYB Bank? {" "}
-                      <Link 
-                        className={classes.link}
-                        to='/register'
-                      >
-                        Create an account
-                      </Link>
-                    </Typography>
-                </footer>
-            </div>
-        )
+    return (
+      <div className={classes.background}>
+        <div className={classes.container}>
+          <div className={classes.img} />
+            <Typography className={classes.txt}>Take hold of your finances</Typography>
+              {login_err && (
+                <Typography className={classes.link}>
+                  Your email or password is incorrect.
+                </Typography>
+              )}
+            <form className={classes.text} noValidate autoComplete="off">
+              <div className={classes.top}>
+                <div className={classes.icon}><PersonIcon /></div> 
+                <TextField 
+                  InputProps={{
+                      className: classes.input
+                  }}
+                  onChange={handleEmail} // defined in App.js
+                  placeholder="email" 
+                />
+              </div>
+              <div className={classes.bottom}>
+                <div className={classes.icon}><LockOutlinedIcon /></div> 
+                <TextField 
+                  InputProps={{
+                    className: classes.input
+                  }}
+                  onChange={handlePass} // defined in App.js
+                  type="password" placeholder="password" 
+                />
+              </div>
+            </form> 
+            <Button 
+              className={classes.btn}
+              onClick={onLogin}  // defined in App.js
+            >
+              login
+            </Button>
+          </div>
+          <footer className={classes.footer}>
+            <Typography>New to SYB Bank? {" "}
+              <Link 
+                className={classes.link}
+                to='/register' // link to register page
+              >
+                Create an account
+              </Link>
+            </Typography>
+          </footer>
+        </div>
+      )
     }
 }
 
